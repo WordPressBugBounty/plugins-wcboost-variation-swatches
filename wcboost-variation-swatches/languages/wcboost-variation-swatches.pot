@@ -1,0 +1,312 @@
+# Copyright (C) 2024 WCBoost
+# This file is distributed under the same license as the WCBoost - Variation Swatches plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WCBoost - Variation Swatches 1.0.17\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wcboost-variation-swatches\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-06-24T01:05:13+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.9.0\n"
+"X-Domain: wcboost-variation-swatches\n"
+
+#. Plugin Name of the plugin
+msgid "WCBoost - Variation Swatches"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://wcboost.com/plugin/woocommerce-variation-swatches/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Transform boring dropdown variants into attractive and intuitive swatches, improving user experience and simplifying product selection."
+msgstr ""
+
+#. Author of the plugin
+msgid "WCBoost"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://wcboost.com/"
+msgstr ""
+
+#. translators: %s is a datetime
+#: includes/admin/backup.php:80
+msgid "Found a backup of your attributes type. This backup was generated at %s."
+msgstr ""
+
+#: includes/admin/backup.php:84
+msgid "Restore attributes"
+msgstr ""
+
+#: includes/admin/backup.php:85
+msgid "Ignore"
+msgstr ""
+
+#: includes/admin/backup.php:94
+msgid "All attribute types have been restored."
+msgstr ""
+
+#: includes/admin/backup.php:245
+#: includes/admin/backup.php:259
+#: includes/customizer/customizer.php:44
+msgid "Variation Swatches"
+msgstr ""
+
+#: includes/admin/backup.php:246
+#: includes/admin/backup.php:260
+msgid "Attributes Swatches"
+msgstr ""
+
+#. translators: %s: image URL
+#: includes/admin/backup.php:525
+msgid "Not able to attach \"%s\"."
+msgstr ""
+
+#. translators: %s: image URL
+#: includes/admin/backup.php:534
+msgid "Unable to use image \"%s\"."
+msgstr ""
+
+#: includes/admin/product-data.php:72
+msgid "Select terms"
+msgstr ""
+
+#: includes/admin/product-data.php:89
+msgid "Select all"
+msgstr ""
+
+#: includes/admin/product-data.php:90
+msgid "Select none"
+msgstr ""
+
+#: includes/admin/product-data.php:91
+msgid "Add new"
+msgstr ""
+
+#: includes/admin/product-data.php:105
+msgid "Swatches"
+msgstr ""
+
+#: includes/admin/product-data.php:152
+msgid "Click to toggle"
+msgstr ""
+
+#: includes/admin/product-data.php:163
+msgid "Type"
+msgstr ""
+
+#. translators: %s is attribute default type
+#: includes/admin/product-data.php:165
+msgid "The default type is: %s"
+msgstr ""
+
+#: includes/admin/product-data.php:167
+#: includes/admin/product-data.php:182
+#: includes/admin/product-data.php:196
+msgid "Default"
+msgstr ""
+
+#: includes/admin/product-data.php:178
+msgid "Shape"
+msgstr ""
+
+#. translators: %s is the default swatch shape
+#: includes/admin/product-data.php:180
+msgid "The default shape is: %s"
+msgstr ""
+
+#: includes/admin/product-data.php:193
+msgid "Size"
+msgstr ""
+
+#: includes/admin/product-data.php:197
+msgid "Custom"
+msgstr ""
+
+#: includes/admin/product-data.php:203
+msgid "Width"
+msgstr ""
+
+#: includes/admin/product-data.php:204
+msgid "Height"
+msgstr ""
+
+#: includes/admin/product-data.php:318
+msgid "Edit"
+msgstr ""
+
+#: includes/admin/product-data.php:320
+msgid "Delete Image"
+msgstr ""
+
+#: includes/admin/product-data.php:321
+#: includes/admin/term-meta.php:219
+msgid "Remove"
+msgstr ""
+
+#: includes/admin/product-data.php:407
+msgid "Wrong request"
+msgstr ""
+
+#: includes/admin/product-data.php:411
+msgid "Not enough data"
+msgstr ""
+
+#: includes/admin/product-data.php:419
+msgid "Taxonomy is not exists"
+msgstr ""
+
+#: includes/admin/product-data.php:423
+msgid "This term is already exists"
+msgstr ""
+
+#: includes/admin/product-data.php:431
+msgid "Added successfully"
+msgstr ""
+
+#: includes/admin/product-data.php:459
+msgid "Close dialog"
+msgstr ""
+
+#: includes/admin/product-data.php:462
+msgid "Add New Term"
+msgstr ""
+
+#: includes/admin/product-data.php:466
+msgid "Name"
+msgstr ""
+
+#: includes/admin/product-data.php:473
+#: includes/admin/term-meta.php:94
+msgid "Color"
+msgstr ""
+
+#: includes/admin/product-data.php:477
+#: includes/admin/term-meta.php:95
+msgid "Image"
+msgstr ""
+
+#: includes/admin/product-data.php:479
+#: includes/admin/term-meta.php:217
+msgid "Upload"
+msgstr ""
+
+#: includes/admin/product-data.php:480
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/product-data.php:484
+#: includes/admin/term-meta.php:96
+msgid "Label"
+msgstr ""
+
+#: includes/admin/product-data.php:494
+msgid "Add New"
+msgstr ""
+
+#: includes/admin/settings.php:137
+msgid "Circle"
+msgstr ""
+
+#: includes/admin/settings.php:138
+msgid "Rounded corners"
+msgstr ""
+
+#: includes/admin/settings.php:139
+msgid "Square"
+msgstr ""
+
+#: includes/admin/settings.php:146
+msgid "Theme Default"
+msgstr ""
+
+#: includes/admin/term-meta.php:97
+msgid "Button"
+msgstr ""
+
+#: includes/admin/term-meta.php:136
+#: includes/admin/term-meta.php:162
+msgid "This data will be used for variation swatches of variable products."
+msgstr ""
+
+#: includes/admin/term-meta.php:177
+msgid "Swatches Color"
+msgstr ""
+
+#: includes/admin/term-meta.php:178
+#: includes/admin/term-meta.php:214
+msgid "Swatches Image"
+msgstr ""
+
+#: includes/admin/term-meta.php:179
+msgid "Swatches Label"
+msgstr ""
+
+#: includes/admin/term-meta.php:215
+msgid "Use image"
+msgstr ""
+
+#: includes/compatibility.php:93
+msgid "WCBoost - Variation Swatches requires WooCommerce to work. Please install and activate WooCommerce before using this extension."
+msgstr ""
+
+#: includes/compatibility.php:108
+msgid "WCBoost - Variation Swatches (Free) has been automatically deactivated because you have installed the Pro version."
+msgstr ""
+
+#: includes/customizer/customizer.php:45
+msgid "Some of these options can be overidden in product data settings."
+msgstr ""
+
+#: includes/customizer/customizer.php:64
+msgid "Swatches Shape"
+msgstr ""
+
+#: includes/customizer/customizer.php:65
+msgid "Choose the shape style of variation swatches"
+msgstr ""
+
+#: includes/customizer/customizer.php:89
+msgid "Swatches Size"
+msgstr ""
+
+#: includes/customizer/customizer.php:90
+msgid "Set the default size of variation swatches."
+msgstr ""
+
+#: includes/customizer/customizer.php:110
+msgid "Enable tooltip"
+msgstr ""
+
+#: includes/customizer/customizer.php:130
+msgid "Convert default dropdowns to buttons"
+msgstr ""
+
+#: includes/customizer/customizer.php:150
+msgid "Show the selected attribute's label"
+msgstr ""
+
+#: includes/plugin.php:172
+msgid "Go Pro"
+msgstr ""
+
+#: includes/plugin.php:196
+msgid "View plugin documentation"
+msgstr ""
+
+#: includes/plugin.php:196
+msgid "Docs"
+msgstr ""
+
+#: includes/plugin.php:197
+msgid "Visit community support forums"
+msgstr ""
+
+#: includes/plugin.php:197
+msgid "Community support"
+msgstr ""
