@@ -71,13 +71,13 @@ class Backup {
 		$backup = $this->get_backup_attributes();
 
 		if ( $backup && ! get_option( 'wcboost_variation_swatches_ignore_restore' ) ) {
-			$backup_date = date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $backup['time'] );
+			$backup_date = gmdate( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $backup['time'] );
 			?>
 			<div class="notice notice-warning is-dismissible">
 				<p>
 					<?php
 					/* translators: %s is a datetime */
-					printf( esc_html__( 'Found a backup of your attributes type. This backup was generated at %s.', 'wcboost-variation-swatches' ), $backup_date );
+					printf( esc_html__( 'Found a backup of your attributes type. This backup was generated at %s.', 'wcboost-variation-swatches' ), esc_html( $backup_date ) );
 					?>
 				</p>
 				<p>
@@ -88,7 +88,7 @@ class Backup {
 			<?php
 		}
 
-		if ( ! $backup && isset( $_GET['message'] ) && 'wcboost_variation_swatches_restored_backup' == $_GET['message'] ) {
+		if ( ! $backup && isset( $_GET['message'] ) && 'wcboost_variation_swatches_restored_backup' == wp_unslash( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			?>
 			<div class="notice notice-success is-dismissible">
 				<p><?php esc_html_e( 'All attribute types have been restored.', 'wcboost-variation-swatches' ) ?></p>
@@ -105,7 +105,7 @@ class Backup {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], $_GET['action'] ) ) {
+		if ( ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), wp_unslash( $_GET['action'] ) ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			return;
 		}
 
@@ -128,7 +128,7 @@ class Backup {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], $_GET['action'] ) ) {
+		if ( ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), wp_unslash( $_GET['action'] ) ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			return;
 		}
 
@@ -157,7 +157,7 @@ class Backup {
 		$attributes = isset( $backup['attributes'] ) ? $backup['attributes'] : $backup;
 
 		foreach ( $attributes as $id => $attribute ) {
-			$wpdb->update(
+			$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->prefix . 'woocommerce_attribute_taxonomies',
 				[ 'attribute_type' => $attribute->attribute_type ],
 				[ 'attribute_id' => $id ],
@@ -211,7 +211,7 @@ class Backup {
 
 			// Reset attributes to default.
 			foreach ( $backup['attributes'] as $id => $attribute ) {
-				$wpdb->update(
+				$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 					$wpdb->prefix . 'woocommerce_attribute_taxonomies',
 					[ 'attribute_type' => 'select' ],
 					[ 'attribute_id' => $id ],
@@ -515,14 +515,14 @@ class Backup {
 			$upload = wc_rest_upload_image_from_url( $url );
 
 			if ( is_wp_error( $upload ) ) {
-				throw new \Exception( $upload->get_error_message(), 400 );
+				throw new \Exception( esc_html( $upload->get_error_message() ), 400 );
 			}
 
 			$id = wc_rest_set_uploaded_image_as_attachment( $upload, $product_id );
 
 			if ( ! wp_attachment_is_image( $id ) ) {
 				/* translators: %s: image URL */
-				throw new \Exception( sprintf( esc_html__( 'Not able to attach "%s".', 'wcboost-variation-swatches' ), $url ), 400 );
+				throw new \Exception( sprintf( esc_html__( 'Not able to attach "%s".', 'wcboost-variation-swatches' ), esc_html( $url ) ), 400 );
 			}
 
 			// Save attachment source for future reference.
@@ -531,7 +531,7 @@ class Backup {
 
 		if ( ! $id ) {
 			/* translators: %s: image URL */
-			throw new \Exception( sprintf( esc_html__( 'Unable to use image "%s".', 'wcboost-variation-swatches' ), $url ), 400 );
+			throw new \Exception( sprintf( esc_html__( 'Unable to use image "%s".', 'wcboost-variation-swatches' ), esc_html( $url ) ), 400 );
 		}
 
 		return $id;

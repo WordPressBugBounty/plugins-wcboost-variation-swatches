@@ -6,6 +6,7 @@ namespace WCBoost\VariationSwatches;
 
 defined( 'ABSPATH' ) || exit;
 
+use WCBoost\VariationSwatches\Helper;
 use WCBoost\VariationSwatches\Admin\Term_Meta;
 
 class Swatches {
@@ -119,7 +120,7 @@ class Swatches {
 		$swatches_args = $this->get_swatches_args( $product->get_id(), $attribute );
 		$swatches_args = wp_parse_args( $args, $swatches_args );
 
-		if ( ! array_key_exists( $swatches_args['swatches_type'], Term_Meta::instance()->get_swatches_types() ) ) {
+		if ( ! Helper::is_swatches_type( $swatches_args['swatches_type'] ) ) {
 			return $html;
 		}
 
@@ -157,7 +158,7 @@ class Swatches {
 				$classes[] = 'wcboost-variation-swatches--has-tooltip';
 			}
 
-			$swatches_html = '<ul class="wcboost-variation-swatches__wrapper" data-attribute_name="' . esc_attr( $name ) . '">' . $swatches_html . '</ul>';
+			$swatches_html = '<ul class="wcboost-variation-swatches__wrapper" data-attribute_name="' . esc_attr( $name ) . '" role="group">' . $swatches_html . '</ul>';
 			$html          = '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">' . $html . $swatches_html . '</div>';
 		}
 
@@ -172,13 +173,12 @@ class Swatches {
 	 * @return string
 	 */
 	public function get_term_swatches( $term, $args ) {
-		$type        = $args['swatches_type'];
-		$term_object = is_object( $term ) ? $term : null;
-		$value       = is_object( $term ) ? $term->slug : $term;
-		$name        = is_object( $term ) ? $term->name : $term;
-		$name        = apply_filters( 'woocommerce_variation_option_name', $name, $term_object, $args['attribute'], $args['product'] );
-		$size        = ! empty( $args['swatches_size'] ) ? sprintf( '--wcboost-swatches-item-width: %1$dpx; --wcboost-swatches-item-height: %2$dpx;', absint( $args['swatches_size']['width'] ), absint( $args['swatches_size']['height'] ) ) : '';
-		$html        = '';
+		$type  = $args['swatches_type'];
+		$value = is_object( $term ) ? $term->slug : $term;
+		$name  = is_object( $term ) ? $term->name : $term;
+		$name  = apply_filters( 'woocommerce_variation_option_name', $name, ( is_object( $term ) ? $term : null ), $args['attribute'], $args['product'] );
+		$size  = ! empty( $args['swatches_size'] ) ? sprintf( '--wcboost-swatches-item-width: %1$dpx; --wcboost-swatches-item-height: %2$dpx;', absint( $args['swatches_size']['width'] ), absint( $args['swatches_size']['height'] ) ) : '';
+		$html  = '';
 
 		if ( is_object( $term ) ) {
 			$selected = sanitize_title( $args['selected'] ) == $value;
@@ -187,13 +187,7 @@ class Swatches {
 			$selected = sanitize_title( $args['selected'] ) === $args['selected'] ? $args['selected'] == sanitize_title( $value ) : $args['selected'] == $value;
 		}
 
-		$key = is_object( $term ) ? $term->term_id : sanitize_title( $term );
-
-		if ( isset( $args['swatches_attributes'][ $key ] ) && isset( $args['swatches_attributes'][ $key ][ $type ] ) ) {
-			$swatches_value = $args['swatches_attributes'][ $key ][ $type ];
-		} else {
-			$swatches_value = is_object( $term ) ? Term_Meta::instance()->get_meta( $term->term_id, $type ) : '';
-		}
+		$data = $this->get_attribute_swatches_data( $term, $args );
 
 		$class = [
 			'wcboost-variation-swatches__item',
@@ -210,9 +204,9 @@ class Swatches {
 
 		switch ( $type ) {
 			case 'color':
-				$color = '--wcboost-swatches-item-color:' . $swatches_value;
+				$color = '--wcboost-swatches-item-color:' . $data['value'];
 				$html  = sprintf(
-					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button">
+					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button" aria-pressed="false">
 						<span class="wcboost-variation-swatches__name">%s</span>
 					</li>',
 					esc_attr( implode( ' ', $class ) ),
@@ -224,12 +218,8 @@ class Swatches {
 				break;
 
 			case 'image':
-				$dimension = array_values( $args['swatches_image_size'] );
-				$image     = $swatches_value ? Helper::get_image( $swatches_value, $dimension ) : '';
-				$image     = $image ? $image[0] : wc_placeholder_img_src( 'thumbnail' );
-
 				$html = sprintf(
-					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button">
+					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button" aria-pressed="false">
 						<img src="%s" alt="%s">
 						<span class="wcboost-variation-swatches__name">%s</span>
 					</li>',
@@ -237,30 +227,28 @@ class Swatches {
 					esc_attr( $size ),
 					esc_attr( $name ),
 					esc_attr( $value ),
-					esc_url( $image ),
-					esc_attr( $name ),
+					esc_url( $data['image_src'] ),
+					esc_attr( ! empty( $data['image_alt'] ) ? $data['image_alt'] : $name ),
 					esc_html( $name )
 				);
 				break;
 
 			case 'label':
-				$label = $swatches_value ? $swatches_value : $name;
-
 				$html = sprintf(
-					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button">
+					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button" aria-pressed="false">
 						<span class="wcboost-variation-swatches__name">%s</span>
 					</li>',
 					esc_attr( implode( ' ', $class ) ),
 					esc_attr( $size ),
 					esc_attr( $name ),
 					esc_attr( $value ),
-					esc_html( $label )
+					esc_html( $data['value'] ? $data['value'] : $name )
 				);
 				break;
 
 			case 'button':
 				$html = sprintf(
-					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button">
+					'<li class="%s" style="%s" aria-label="%s" data-value="%s" tabindex="0" role="button" aria-pressed="false">
 						<span class="wcboost-variation-swatches__name">%s</span>
 					</li>',
 					esc_attr( implode( ' ', $class ) ),
@@ -272,7 +260,7 @@ class Swatches {
 				break;
 		}
 
-		return apply_filters( 'wcboost_variation_swatches_' . $type . '_html', $html, $args );
+		return apply_filters( 'wcboost_variation_swatches_' . $type . '_html', $html, $args, $data, $term );
 	}
 
 	/**
@@ -303,6 +291,8 @@ class Swatches {
 				if ( 'select' == $swatches_args['swatches_type'] && wc_string_to_bool( Helper::get_settings( 'auto_button' ) ) ) {
 					$swatches_args['swatches_type'] = 'button';
 				}
+			} else {
+				$swatches_args['swatches_edited'] = true;
 			}
 
 			if ( Helper::is_default( $swatches_args['swatches_shape'] ) ) {
@@ -325,6 +315,61 @@ class Swatches {
 		$swatches_args['swatches_tooltip']    = wc_string_to_bool( Helper::get_settings( 'tooltip' ) );
 		$swatches_args['swatches_image_size'] = $swatches_args['swatches_size'] ? $swatches_args['swatches_size'] : Helper::get_settings( 'size' );
 
-		return apply_filters( 'wcboost_variation_swatches_item_args', $swatches_args );
+		return apply_filters( 'wcboost_variation_swatches_item_args', $swatches_args, $attribute, $product_id, );
+	}
+
+	/**
+	 * Get attribute swatches data
+	 *
+	 * @param object|string  $term Term object or name (with custom attributes).
+	 * @param array  $args Swatches args.
+	 *
+	 * @return array {
+	 *     @type string $type The swatches type.
+	 *     @type string $value The swatches value.
+	 *     @type string $image_src The swatches image src.
+	 * }
+	 */
+	public function get_attribute_swatches_data( $term, $args ) {
+		$type = isset( $args['swatches_type'] ) ? $args['swatches_type'] : 'select';
+		$data = [
+			'type'  => $type,
+			'value' => '',
+		];
+
+		if ( ! Helper::is_swatches_type( $type ) ) {
+			return $data;
+		}
+
+		$key = is_object( $term ) ? $term->term_id : sanitize_title( $term );
+
+		if ( isset( $args['swatches_attributes'][ $key ] ) && isset( $args['swatches_attributes'][ $key ][ $type ] ) ) {
+			$value = $args['swatches_attributes'][ $key ][ $type ];
+		} else {
+			$value = is_object( $term ) ? Term_Meta::instance()->get_meta( $term->term_id, $type ) : '';
+		}
+
+		$data['value'] = $value;
+
+		if ( 'image' == $type ) {
+			if ( ! $value ) {
+				$image_src = wc_placeholder_img_src( 'thumbnail' );
+			} else {
+				$dimension = ! empty( $args['swatches_image_size'] ) ? array_values( $args['swatches_image_size'] ) : 'thumbnail';
+				$image     = Helper::get_image( $value, $dimension, false );
+				$image_src = $image ? $image[0] : wc_placeholder_img_src( 'thumbnail' );
+			}
+
+			$data['image_src'] = $image_src;
+
+			if ( ! empty( $args['product'] ) ) {
+				$product = $args['product'];
+				$name    = is_object( $term ) ? $term->name : $term;
+
+				$data['image_alt'] = $product->get_title() . ' - ' . $name;
+			}
+		}
+
+		return apply_filters( 'wcboost_variation_swatches_attribute_swatches_data', $data, $term, $args );
 	}
 }

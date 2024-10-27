@@ -6,7 +6,7 @@ jQuery( function( $ ) {
 
 	var WCBoostVariationSwatchesMeta = {
 		init: function() {
-			$( '.wcboost-variation-swatches__field-color input' ).wpColorPicker();
+			$( '.wcboost-variation-swatches__field-color:not(.is-multicolor) input' ).wpColorPicker();
 
 			$( document.body )
 				.on( 'click', '.wcboost-variation-swatches__field-image .button-add-image, .wcboost-variation-swatches__field-image img', this.uploadImage )
@@ -47,13 +47,14 @@ jQuery( function( $ ) {
 
 			// When an image is selected, run a callback.
 			mediaFrame.on( 'select', function () {
-				var attachment = mediaFrame.state().get( 'selection' ).first().toJSON();
+				var attachment = mediaFrame.state().get( 'selection' ).first().toJSON(),
+					attachment_image = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url,
+					$field = $button.closest( '.wcboost-variation-swatches__field-image' );
 
-				$button.closest( '.wcboost-variation-swatches__field-image' ).find( 'input[type="hidden"]' ).val( attachment.id );
-				$button.siblings( '.button-remove-image' ).removeClass( 'hidden' );
-
-				var attachment_image = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
-				$button.closest( '.wcboost-variation-swatches__field-image' ).find( 'img' ).attr( 'src', attachment_image );
+				$field.find( 'input[type="hidden"]' ).val( attachment.id );
+				$field.find( '.button-remove-image' ).removeClass( 'hidden' );
+				$field.find( 'img' ).attr( 'src', attachment_image );
+				$field.removeClass( 'is-empty' );
 			} );
 
 			// Finally, open the modal.
@@ -63,11 +64,13 @@ jQuery( function( $ ) {
 		removeImage: function( event ) {
 			event.preventDefault();
 
-			var $button =  $( this );
+			var $button =  $( this ),
+				$field = $button.closest( '.wcboost-variation-swatches__field-image' );
 
 			$button.addClass( 'hidden' );
-			$button.closest( '.wcboost-variation-swatches__field-image' ).find( 'input[type="hidden"]' ).val( '' );
-			$button.closest( '.wcboost-variation-swatches__field-image' ).find( 'img' ).attr( 'src', function() {
+			$field.addClass( 'is-empty' );
+			$field.find( 'input[type="hidden"]' ).val( '' );
+			$field.find( 'img' ).attr( 'src', function() {
 				return this.dataset.placeholder;
 			} );
 		},
@@ -94,7 +97,7 @@ jQuery( function( $ ) {
 
 			$( '#wcboost_variation_swatches_data' ).load( this_page + ' #wcboost_variation_swatches_data_inner', function() {
 				setTimeout( function() {
-					$( '.wcboost-variation-swatches__field-color input' ).wpColorPicker();
+					$( '.wcboost-variation-swatches__field-color:not(.is-multicolor) input' ).wpColorPicker();
 				} );
 			} );
 		},
@@ -139,10 +142,8 @@ jQuery( function( $ ) {
 				$message = $( '.wcboost-variation-swatches-modal__message', $dialog ),
 				data = $( ':input', $dialog ).serializeObject();
 
-			console.log(data);
-
 			if ( ! data.attribute_name ) {
-				$( 'input[name="attribute_name"]', $dialog ).focus();
+				$( 'input[name="attribute_name"]', $dialog ).get(0).focus();
 				return;
 			}
 
@@ -165,16 +166,19 @@ jQuery( function( $ ) {
 
 					// Reset inputs.
 					$( 'input[name="attribute_name"]', $dialog ).val( '' ).removeClass( 'error' );
-					$( 'input[name="label"]', $dialog ).val( '' );
-					$( '.wp-picker-clear', $dialog ).trigger( 'click' );
 					$( '.button-remove-image', $dialog ).trigger( 'click' );
+					$( '.wp-picker-clear', $dialog ).trigger( 'click' );
+					$( '.wcboost-variation-swatches__field-color > :input', $dialog ).val( '' );
+					$( '.wcboost-variation-swatches__field-label > :input', $dialog ).val( '' );
 
 					// Add new attributes to the select box.
 					var $metabox = $( '.woocommerce_attribute.wc-metabox[data-taxonomy="' + data.attribute_taxonomy + '"]', '#product_attributes' );
 
 					$( 'select.attribute_values', $metabox )
 						.append( '<option value="' + res.term_id + '" selected="selected">' + data.attribute_name + '</option>' )
-						.change();
+						.trigger( 'change' );
+
+					$dialog.get(0).dispatchEvent( new CustomEvent( 'wcboost_variation_swatches_term_added' ) );
 				}
 			} );
 		}

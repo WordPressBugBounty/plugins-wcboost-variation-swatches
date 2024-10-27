@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 use WCBoost\VariationSwatches\Helper;
 use WCBoost\VariationSwatches\Plugin;
+use WCBoost\VariationSwatches\Admin\Term_Meta;
 
 class Product_Data {
 	const META_NAME = 'wcboost_variation_swatches';
@@ -58,30 +59,39 @@ class Product_Data {
 	}
 
 	/**
-	 * Add selector for extra attribute types. By default
+	 * Add selector for extra attribute types.
 	 *
-	 * @param $taxonomy
-	 * @param $index
+	 * @param object $taxonomy
+	 * @param int $index
+	 * @param \WC_Product_Attribute $attribute
 	 */
 	public function product_option_terms( $taxonomy, $index, $attribute ) {
 		if ( ! Helper::attribute_is_swatches( $taxonomy ) ) {
 			return;
 		}
+		$term_limit = absint( apply_filters( 'woocommerce_admin_terms_metabox_datalimit', 50 ) );
+		$attribute_orderby = ! empty( $taxonomy->attribute_orderby ) ? $taxonomy->attribute_orderby : 'name';
 		?>
-
-		<select multiple="multiple" data-placeholder="<?php esc_attr_e( 'Select terms', 'wcboost-variation-swatches' ); ?>" class="multiselect attribute_values wc-enhanced-select" name="attribute_values[<?php echo esc_attr( $index ); ?>][]">
+		<select
+			multiple="multiple"
+			data-minimum_input_length="0"
+			data-limit="<?php echo esc_attr( $term_limit ); ?>" data-return_id="id"
+			data-placeholder="<?php esc_attr_e( 'Select values', 'wcboost-variation-swatches' ); ?>"
+			data-orderby="<?php echo esc_attr( $attribute_orderby ); ?>"
+			class="multiselect attribute_values wc-taxonomy-term-search"
+			name="attribute_values[<?php echo esc_attr( $index ); ?>][]"
+			data-taxonomy="<?php echo esc_attr( $attribute->get_taxonomy() ); ?>"
+		>
 			<?php
-			$args      = [
-				'orderby'    => ! empty( $taxonomy->attribute_orderby ) ? $taxonomy->attribute_orderby : 'name',
-				'hide_empty' => 0,
-			];
-			$all_terms = get_terms( $attribute->get_taxonomy(), apply_filters( 'woocommerce_product_attribute_terms', $args ) );
+			$selected_terms = $attribute->get_terms();
 
-			if ( $all_terms ) {
-				foreach ( $all_terms as $term ) {
-					$options = $attribute->get_options();
-					$options = ! empty( $options ) ? $options : [];
-					echo '<option value="' . esc_attr( $term->term_id ) . '"' . wc_selected( $term->term_id, $options ) . '>' . esc_html( apply_filters( 'woocommerce_product_attribute_term_name', $term->name, $term ) ) . '</option>';
+			if ( $selected_terms ) {
+				foreach ( $selected_terms as $selected_term ) {
+					$options   = $attribute->get_options();
+					$options   = ! empty( $options ) ? $options : [];
+					$term_name = apply_filters( 'woocommerce_product_attribute_term_name', $selected_term->name, $selected_term );
+
+					echo '<option value="' . esc_attr( $selected_term->term_id ) . '" selected="selected">' . esc_html( $term_name ) . '</option>';
 				}
 			}
 			?>
@@ -89,7 +99,6 @@ class Product_Data {
 		<button class="button plus select_all_attributes"><?php esc_html_e( 'Select all', 'wcboost-variation-swatches' ); ?></button>
 		<button class="button minus select_no_attributes"><?php esc_html_e( 'Select none', 'wcboost-variation-swatches' ); ?></button>
 		<button class="button fr plus add_new_attribute_with_swatches" data-type="<?php echo esc_attr( $taxonomy->attribute_type ) ?>"><?php esc_html_e( 'Add new', 'wcboost-variation-swatches' ); ?></button>
-
 		<?php
 	}
 
@@ -151,7 +160,7 @@ class Product_Data {
 						<h3>
 							<div class="handlediv" title="<?php esc_attr_e( 'Click to toggle', 'wcboost-variation-swatches' ); ?>"></div>
 							<div class="swatches-type fr" data-default="<?php echo esc_attr( $types[ $attribute_type ] ) ?>"><?php echo esc_html( $box_title ); ?></div>
-							<strong class="attribute_name"><?php echo wc_attribute_label( $attribute->get_name() ); ?></strong>
+							<strong class="attribute_name"><?php echo esc_html( wc_attribute_label( $attribute->get_name() ) ); ?></strong>
 						</h3>
 						<div class="wc-metabox-content hidden">
 							<div class="options_group">
@@ -207,7 +216,7 @@ class Product_Data {
 							</div>
 
 							<div class="options_group options_group--swatches">
-								<p class="form-field form-field__swatches-color clearfix <?php echo 'color' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
+								<fieldset class="form-field form-field__swatches-color clearfix <?php echo 'color' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
 									<?php
 									$this->swatches_metabox( [
 										'attribute' => $attribute,
@@ -215,9 +224,9 @@ class Product_Data {
 										'values'    => $attribute_swatches['swatches'],
 									]);
 									?>
-								</p>
+								</fieldset>
 
-								<p class="form-field form-field__swatches-image clearfix <?php echo 'image' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
+								<fieldset class="form-field form-field__swatches-image clearfix <?php echo 'image' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
 									<?php
 									$this->swatches_metabox( [
 										'attribute' => $attribute,
@@ -225,9 +234,9 @@ class Product_Data {
 										'values'    => $attribute_swatches['swatches'],
 									]);
 									?>
-								</p>
+								</fieldset>
 
-								<p class="form-field form-field__swatches-label clearfix <?php echo 'label' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
+								<fieldset class="form-field form-field__swatches-label clearfix <?php echo 'label' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
 									<?php
 									$this->swatches_metabox( [
 										'attribute' => $attribute,
@@ -235,7 +244,7 @@ class Product_Data {
 										'values'    => $attribute_swatches['swatches'],
 									]);
 									?>
-								</p>
+								</fieldset>
 							</div>
 						</div>
 					</div>
@@ -259,6 +268,7 @@ class Product_Data {
 			'type'      => 'color',
 			'values'    => '',
 		] );
+		$args = apply_filters( 'wcboost_variation_swatches_product_meta_attribute_swatches_args', $args );
 
 		if ( empty( $args['attribute'] ) ) {
 			return;
@@ -289,54 +299,30 @@ class Product_Data {
 
 			switch ( $args['type'] ) {
 				case 'color':
-					printf(
-						'<span class="wcboost-variation-swatches__field-color">
-							<span class="label">%s</span><br>
-							<input type="text" name="%s" value="%s">
-						</span>',
-						esc_html( $label ),
-						esc_attr( "wcboost_variation_swatches[$attribute_name][swatches][$name][color]" ),
-						esc_attr( $values['color'] )
-					);
+					Term_Meta::swatches_field( [
+						'type'  => 'color',
+						'desc'  => $label,
+						'name'  => "wcboost_variation_swatches[$attribute_name][swatches][$name][color]",
+						'value' => $values['color'],
+					] );
 					break;
 
 				case 'image':
-					$default_image = wc_placeholder_img_src( 'thumbnail' );
-					$image_src = ! empty( $args['values'][ $name ]['image'] ) ? wp_get_attachment_image_url( $args['values'][ $name ]['image'] ) : $default_image;
-
-					printf(
-						'<span class="wcboost-variation-swatches__field-image">
-							<img src="%s" data-placeholder="%s" width="60" height="60">
-							<br>%s<br>
-							<a href="#" class="button-link button-add-image">%s</a>
-							<a href="#" class="button-link button-remove-image delete %s" aria-label="%s">%s</a>
-							<input type="hidden" name="%s" value="%s">
-						</span>',
-						esc_url( $image_src ),
-						esc_url( $default_image ),
-						esc_html( $label ),
-						esc_html__( 'Edit', 'wcboost-variation-swatches' ),
-						empty( $values['image'] ) ? 'hidden' : '',
-						esc_html__( 'Delete Image', 'wcboost-variation-swatches' ),
-						esc_html__( 'Remove', 'wcboost-variation-swatches' ),
-						esc_attr( "wcboost_variation_swatches[$attribute_name][swatches][$name][image]" ),
-						esc_attr( $values['image'] )
-					);
+					Term_Meta::swatches_field( [
+						'type'  => 'image',
+						'desc'  => $label,
+						'name'  => "wcboost_variation_swatches[$attribute_name][swatches][$name][image]",
+						'value' => $values['image'],
+					] );
 					break;
 
 				case 'label':
-					// preg_match_all( '/(?<=\b)\w/iu', $label, $matches );
-					// $placeholder = mb_strtoupper( implode( '', $matches[0] ) );
-
-					printf(
-						'<span class="wcboost-variation-swatches__field-label">
-							<input type="text" name="%s" value="%s"><br>
-							<span class="label">%s</span>
-						</span>',
-						esc_attr( "wcboost_variation_swatches[$attribute_name][swatches][$name][label]" ),
-						esc_attr( $values['label'] ),
-						esc_html( $label )
-					);
+					Term_Meta::swatches_field( [
+						'type'  => 'label',
+						'desc'  => $label,
+						'name'  => "wcboost_variation_swatches[$attribute_name][swatches][$name][label]",
+						'value' => $values['label'],
+					] );
 					break;
 			}
 		}
@@ -350,14 +336,17 @@ class Product_Data {
 	 * @return bool
 	 */
 	public function process_product_swatches_meta( $post_id ) {
-		if ( ! isset( $_POST['wcboost_variation_swatches'] ) || ! is_array( $_POST['wcboost_variation_swatches'] ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$variation_swatches = isset( $_POST['wcboost_variation_swatches'] ) ? $_POST['wcboost_variation_swatches'] : [];
+
+		if ( ! empty( $variation_swatches ) || ! is_array( $variation_swatches ) ) {
 			return;
 		}
 
 		// Sanitize the input data.
 		$data = [];
 
-		foreach ( $_POST['wcboost_variation_swatches'] as $attribute_slug => $settings ) {
+		foreach ( $variation_swatches as $attribute_slug => $settings ) {
 			$data[ $attribute_slug ] = [
 				'type'        => Settings::instance()->sanitize_type( $settings['type'] ),
 				'shape'       => Settings::instance()->sanitize_shape( $settings['shape'] ),
@@ -371,7 +360,11 @@ class Product_Data {
 			}
 		}
 
-		update_post_meta( $post_id, self::META_NAME, $data );
+		$data = apply_filters( 'wcboost_variation_swatches_process_product_swatches_meta', $data, $post_id );
+
+		if ( is_array( $data ) ) {
+			update_post_meta( $post_id, self::META_NAME, $data );
+		}
 	}
 
 	/**
@@ -396,14 +389,15 @@ class Product_Data {
 			}
 		}
 
-		return $meta;
+		return apply_filters( 'wcboost_variation_swatches_product_meta', $meta, $post_id );
 	}
 
 	/**
 	 * Ajax function handles adding new attribute term
 	 */
 	public function ajax_add_new_attribute_term() {
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'wcboost_variation_swatches_add_term' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), 'wcboost_variation_swatches_add_term' ) ) {
 			wp_send_json_error( esc_html__( 'Wrong request', 'wcboost-variation-swatches' ) );
 		}
 
@@ -411,9 +405,9 @@ class Product_Data {
 			wp_send_json_error( esc_html__( 'Not enough data', 'wcboost-variation-swatches' ) );
 		}
 
-		$name     = sanitize_text_field( $_POST['attribute_name'] );
-		$taxonomy = sanitize_text_field( $_POST['attribute_taxonomy'] );
-		$type     = ! empty( $_POST['attribute_type'] ) ? sanitize_text_field( $_POST['attribute_type'] ) : 'select';
+		$name     = sanitize_text_field( wp_unslash( $_POST['attribute_name'] ) );
+		$taxonomy = sanitize_text_field( wp_unslash( $_POST['attribute_taxonomy'] ) );
+		$type     = ! empty( $_POST['attribute_type'] ) ? sanitize_text_field( wp_unslash( $_POST['attribute_type'] ) ) : 'select';
 
 		if ( ! taxonomy_exists( $taxonomy ) ) {
 			wp_send_json_error( esc_html__( 'Taxonomy is not exists', 'wcboost-variation-swatches' ) );
@@ -423,8 +417,8 @@ class Product_Data {
 			wp_send_json_error( esc_html__( 'This term is already exists', 'wcboost-variation-swatches' ) );
 		}
 
-		$swatches = empty( $_POST[ $type ] ) ? null : [ 'type' => $type, 'value' => sanitize_text_field( $_POST[ $type ] ) ];
-		$term = Term_Meta::instance()->insert_term( $name, $taxonomy, $swatches );
+		$swatches = empty( $_POST[ 'swatches_' . $type ] ) ? null : [ 'type' => $type, 'value' => sanitize_text_field( wp_unslash( $_POST[ 'swatches_' . $type ] ) ) ];
+		$term     = Term_Meta::instance()->insert_term( $name, $taxonomy, $swatches );
 
 		if ( ! is_wp_error( $term ) ) {
 			wp_send_json_success( [
@@ -448,8 +442,6 @@ class Product_Data {
 		if ( ! in_array( $pagenow, ['post.php', 'post-new.php'] ) || get_post_type( $thepostid ) != 'product' ) {
 			return;
 		}
-
-		$default_image = wc_placeholder_img_src( 'thumbnail' );
 		?>
 
 		<div id="wcboost-variation-swatches-new-term-dialog" class="wcboost-variation-swatches-dialog hidden" style="display: none">
@@ -468,23 +460,30 @@ class Product_Data {
 						</label>
 					</p>
 
-					<p class="form-field form-field__swatches">
-						<span class="wcboost-variation-swatches__field-color">
-							<span class="label"><?php esc_html_e( 'Color', 'wcboost-variation-swatches' ) ?></span><br>
-							<input type="text" name="color" value="">
-						</span>
-						<span class="wcboost-variation-swatches__field-image">
-							<span class="label"><?php esc_html_e( 'Image', 'wcboost-variation-swatches' ) ?></span><br>
-							<img src="<?php echo esc_url( $default_image ) ?>" data-placeholder="<?php echo esc_url( $default_image ) ?>" width="60" height="60">
-							<a href="#" class="button-add-image"><?php esc_html_e( 'Upload', 'wcboost-variation-swatches' ) ?></a>
-							<a href="#" class="button-link button-remove-image delete hidden"><?php esc_html_e( 'Delete', 'wcboost-variation-swatches' ) ?></a>
-							<input type="hidden" name="image" value="">
-						</span>
-						<span class="wcboost-variation-swatches__field-label">
-							<span class="label"><?php esc_html_e( 'Label', 'wcboost-variation-swatches' ) ?></span><br>
-							<input type="text" name="label" value="">
-						</span>
-					</p>
+					<fieldset class="form-field form-field__swatches">
+						<?php
+						Term_Meta::swatches_field( [
+							'type'  => 'color',
+							'label' => esc_html__( 'Color', 'wcboost-variation-swatches' ),
+							'name'  => 'swatches_color',
+							'value' => '',
+						] );
+
+						Term_Meta::swatches_field( [
+							'type'  => 'image',
+							'label' => esc_html__( 'Image', 'wcboost-variation-swatches' ),
+							'name'  => 'swatches_image',
+							'value' => '',
+						] );
+
+						Term_Meta::swatches_field( [
+							'type'  => 'label',
+							'label' => esc_html__( 'Label', 'wcboost-variation-swatches' ),
+							'name'  => 'swatches_label',
+							'value' => '',
+						] );
+						?>
+					</fieldset>
 
 					<input type="hidden" name="attribute_taxonomy" value="">
 					<input type="hidden" name="attribute_type" value="">

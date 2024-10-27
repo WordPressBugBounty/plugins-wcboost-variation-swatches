@@ -63,7 +63,7 @@ class Term_Meta {
 			add_action( 'pa_' . $tax->attribute_name . '_edit_form_fields', [ $this, 'edit_attribute_fields' ], 10, 2 );
 
 			add_filter( 'manage_edit-pa_' . $tax->attribute_name . '_columns', [ $this, 'add_attribute_columns' ] );
-			add_filter( 'manage_pa_' . $tax->attribute_name . '_custom_column', [ $this, 'add_attribute_column_content' ], 10, 3 );
+			add_action( 'manage_pa_' . $tax->attribute_name . '_custom_column', [ $this, 'add_attribute_column_content' ], 10, 3 );
 		}
 
 		add_action( 'created_term', [ $this, 'save_term_meta' ] );
@@ -90,12 +90,7 @@ class Term_Meta {
 	 * @return array
 	 */
 	public function get_swatches_types() {
-		return [
-			'color'  => esc_html__( 'Color', 'wcboost-variation-swatches' ),
-			'image'  => esc_html__( 'Image', 'wcboost-variation-swatches' ),
-			'label'  => esc_html__( 'Label', 'wcboost-variation-swatches' ),
-			'button' => esc_html__( 'Button', 'wcboost-variation-swatches' ),
-		];
+		return Helper::get_swatches_types();
 	}
 
 	/**
@@ -187,61 +182,6 @@ class Term_Meta {
 	}
 
 	/**
-	 * The input to edit swatches data
-	 *
-	 * @param string $type
-	 * @param object|null $term
-	 */
-	public function field_input( $type, $term = null ) {
-		if ( in_array( $type, [ 'select', 'text' ] ) ) {
-			return;
-		}
-
-		// $type is the same as the meta key.
-		$value = $term && is_object( $term ) ? $this->get_meta( $term->term_id, $type ) : '';
-
-		switch ( $type ) {
-			case 'image':
-				$placeholder = wc_placeholder_img_src( 'thumbnail' );
-				$image_src   = $value ? wp_get_attachment_image_url( $value ) : false;
-				$image_src   = $image_src ? $image_src : $placeholder;
-				?>
-				<div class="wcboost-variation-swatches__field-image">
-					<img src="<?php echo esc_url( $image_src ) ?>" width="60px" height="60px" data-placeholder="<?php echo esc_attr( $placeholder ) ?>" />
-					<p class="hide-if-no-js">
-						<a href="#"
-							class="button button-add-image"
-							aria-label="<?php esc_attr_e( 'Swatches Image', 'wcboost-variation-swatches' ) ?>"
-							data-choose="<?php esc_attr_e( 'Use image', 'wcboost-variation-swatches' ) ?>"
-						>
-							<?php esc_html_e( 'Upload', 'wcboost-variation-swatches' ); ?>
-						</a>
-						<a href="#" class="button button-link button-remove-image <?php echo ! $value ? 'hidden' : '' ?>"><?php esc_html_e( 'Remove', 'wcboost-variation-swatches' ) ?></a>
-					</p>
-					<input type="hidden" name="<?php echo esc_attr( $this->field_name( $type ) ) ?>" value="<?php echo esc_attr( $value ); ?>">
-				</div>
-				<?php
-				break;
-
-			case 'color':
-				?>
-				<p class="wcboost-variation-swatches__field-color">
-					<input type="text" name="<?php echo esc_attr( $this->field_name( $type ) ) ?>" value="<?php echo esc_attr( $value ) ?>" />
-				</p>
-				<?php
-				break;
-
-			case 'label':
-				?>
-				<p class="wcboost-variation-swatches__field-label">
-					<input type="text" name="<?php echo esc_attr( $this->field_name( $type ) ) ?>" value="<?php echo esc_attr( $value ) ?>" size="5" />
-				</p>
-				<?php
-				break;
-		}
-	}
-
-	/**
 	 * Field name
 	 *
 	 * @param string $type
@@ -249,6 +189,36 @@ class Term_Meta {
 	 */
 	protected function field_name( $type ) {
 		return 'wcboost_variation_swatches_' . $type;
+	}
+
+	/**
+	 * The input to edit swatches data
+	 *
+	 * @param string $type
+	 * @param object|null $term
+	 */
+	public function field_input( $type, $term = null ) {
+		if ( ! in_array( $type, [ 'image', 'color', 'label' ] ) ) {
+			return;
+		}
+
+		$value = '';
+
+		if ( $term && is_object( $term ) ) {
+			$value = $this->get_meta( $term->term_id, $type );
+		}
+
+		$args = apply_filters(
+			'wcboost_variation_swatches_term_field_args',
+			[
+				'type'  => $type,
+				'value' => $value,
+				'name'  => $this->field_name( $type ),
+			],
+			$term
+		);
+
+		static::swatches_field( $args );
 	}
 
 	/**
@@ -261,9 +231,10 @@ class Term_Meta {
 
 		foreach ( $types as $type => $label ) {
 			$input_name = $this->field_name( $type );
+			$term_meta  = isset( $_POST[ $input_name ] ) ? sanitize_text_field( wp_unslash( $_POST[ $input_name ] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-			if ( isset( $_POST[ $input_name ] ) ) {
-				$this->update_meta( $term_id, $type, sanitize_text_field( $_POST[ $input_name ] ) );
+			if ( $term_meta ) {
+				$this->update_meta( $term_id, $type, $term_meta );
 			}
 		}
 	}
@@ -276,10 +247,25 @@ class Term_Meta {
 	 * @return array
 	 */
 	public function add_attribute_columns( $columns ) {
-		$new_columns          = [];
-		$new_columns['cb']    = $columns['cb'];
+		$attribute_name     = ! empty( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$attribute_taxonomy = $attribute_name ? Helper::get_attribute_taxonomy( $attribute_name ) : null;
+
+		if ( ! $attribute_taxonomy ) {
+			return $columns;
+		}
+
+		if ( ! Helper::attribute_is_swatches( $attribute_taxonomy, 'edit' ) ) {
+			return $columns;
+		}
+
+		$new_columns = [];
+
+		if ( isset( $columns['cb'] ) ) {
+			$new_columns['cb'] = $columns['cb'];
+			unset( $columns['cb'] );
+		}
+
 		$new_columns['thumb'] = '';
-		unset( $columns['cb'] );
 
 		return array_merge( $new_columns, $columns );
 	}
@@ -287,33 +273,59 @@ class Term_Meta {
 	/**
 	 * Render thumbnail HTML depend on attribute type
 	 *
-	 * @param $columns
-	 * @param $column
-	 * @param $term_id
+	 * @param string $content
+	 * @param string $column
+	 * @param int $term_id
 	 */
-	public function add_attribute_column_content( $columns, $column, $term_id ) {
-		$attr  = Helper::get_attribute_taxonomy( sanitize_text_field( $_REQUEST['taxonomy'] ) );
+	public function add_attribute_column_content( $content, $column, $term_id ) {
+		if ( 'thumb' != $column ) {
+			return;
+		}
+
+		$attribute = ! empty( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( $attribute ) {
+			$attr = Helper::get_attribute_taxonomy( $attribute );
+		}
 
 		if ( ! $attr ) {
 			return;
 		}
 
 		$value = $this->get_meta( $term_id, $attr->attribute_type );
+		$html  = '';
 
 		switch ( $attr->attribute_type ) {
 			case 'color':
-				printf( '<div class="wcboost-variation-swatches__thumbnail wcboost-variation-swatches--color" style="background-color:%s;"></div>', esc_attr( $value ) );
+				$html = sprintf(
+					'<div class="wcboost-variation-swatches-item wcboost-variation-swatches-item--color" style="--wcboost-swatches-color: %s"></div>',
+					esc_attr( $value )
+				);
 				break;
 
 			case 'image':
-				$image = $value ? wp_get_attachment_image_url( $value ) : false;
-				$image = $image ? $image : wc_placeholder_img_src( 'thumbnail' );
-				printf( '<img class="wcboost-variation-swatches__thumbnail wcboost-variation-swatches--image" src="%s" width="40px" height="40px">', esc_url( $image ) );
+				$image_src = $value ? wp_get_attachment_image_url( $value ) : false;
+				$image_src = $image_src ? $image_src : wc_placeholder_img_src( 'thumbnail' );
+				$html      = sprintf(
+					'<img class="wcboost-variation-swatches-item wcboost-variation-swatches-item--image" src="%s" width="40px" height="40px">',
+					esc_url( $image_src )
+				);
 				break;
 
 			case 'label':
-				printf( '<div class="wcboost-variation-swatches__thumbnail wcboost-variation-swatches--label">%s</div>', esc_html( $value ) );
+				$html = sprintf(
+					'<div class="wcboost-variation-swatches-item wcboost-variation-swatches-item--label">%s</div>',
+					esc_html( $value )
+				);
 				break;
+		}
+
+		$html = apply_filters( 'wcboost_variation_swatches_attribute_thumb_column_content', $html, $value, $attr, $term_id );
+
+		if ( ! empty( $html ) ) {
+			echo '<div class="wcboost-variation-swatches__thumbnail wcboost-variation-swatches--' . esc_attr( $attr->attribute_type ) . '">';
+			echo wp_kses_post( $html );
+			echo '</div>';
 		}
 	}
 
@@ -356,6 +368,8 @@ class Term_Meta {
 		}
 
 		update_term_meta( $term_id, $meta_key, $value );
+
+		do_action( 'wcboost_variation_swatches_term_meta_updated', $value, $term_id, $meta_key, $type );
 	}
 
 	/**
@@ -380,7 +394,15 @@ class Term_Meta {
 			// If this is a translation, copy value from the original attribute.
 			// Use a hook to maximize performance and the compatibility in the future.
 			if ( false === $value ) {
-				$value = apply_filters( 'wcboost_variation_swatches_translate_term_meta', $value, $term_id, $key );
+				/**
+				 * This filter is used to translate term meta data.
+				 *
+				 * @param mixed $value The value of the term meta.
+				 * @param int $term_id The term ID.
+				 * @param string $key The key of this term meta.
+				 * @param mixed $type The swatches type.
+				 */
+				$value = apply_filters( 'wcboost_variation_swatches_translate_term_meta', $value, $term_id, $key, $type );
 			}
 
 			// Save this meta data for faster loading in the next time.
@@ -389,7 +411,16 @@ class Term_Meta {
 			}
 		}
 
-		return $value;
+		/**
+		 * Filter the swatche term meta value.
+		 *
+		 * @package mixed $value Swatche data
+		 *
+		 * @param int $term_id The term ID.
+		 * @param string $key The meta_key of the term.
+		 * @param string $type The type of the term.
+		 */
+		return apply_filters( 'wcboost_variation_swatches_term_meta', $value, $term_id, $key, $type );
 	}
 
 	/**
@@ -418,6 +449,102 @@ class Term_Meta {
 		}
 
 		return $key;
+	}
+
+	/**
+	 * Renders a swatch field
+	 *
+	 * @since 1.0.18
+	 *
+	 * @param array $args {
+	 *     @type string $type Type of the swatch field (color, image, label).
+	 *     @type string $name The name of the field.
+	 *     @type string $label The label of the field.
+	 *     @type string $value The value of the field.
+	 *     @type bool $echo Whether to echo the field HTML or return it.
+	 * }
+	 *
+	 * @return string The HTML of the field.
+	 */
+	public static function swatches_field( $args ) {
+		$args = wp_parse_args( $args, [
+			'type'  => 'color',
+			'value' => '',
+			'name'  => '',
+			'label' => '',
+			'desc'  => '',
+			'echo'  => true,
+		]);
+
+		if ( empty( $args['name'] ) )  {
+			return;
+		}
+
+		$html = '';
+
+		switch ( $args['type'] ) {
+			case 'image':
+				$placeholder = wc_placeholder_img_src( 'thumbnail' );
+				$image_src   = $args['value'] ? wp_get_attachment_image_url( $args['value'] ) : false;
+				$image_src   = $image_src ? $image_src : $placeholder;
+
+				$html = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-image ' . ( empty( $args['value'] ) ? 'is-empty' : '' ) . '">';
+				$html .= ! empty( $args['label'] ) ? '<span class="label">' . esc_html( $args['label'] ) . '</span>' : '';
+				$html .= '<div class="wcboost-variation-swatches__field-image-controls">';
+				$html .= sprintf( '<img src="%s" data-placeholder="%s" width="60" height="60">', esc_url( $image_src ), esc_url( $placeholder ) );
+				$html .= sprintf(
+					'<a href="javascript:void(0)" class="button-link button-add-image" aria-label="%s" data-choose="%s">
+						<span class="dashicons dashicons-plus-alt2"></span>
+						<span class="screen-reader-text">%s</span>
+					</a>',
+					esc_attr__( 'Swatches Image', 'wcboost-variation-swatches' ),
+					esc_attr__( 'Use image', 'wcboost-variation-swatches' ),
+					esc_html__( 'Upload', 'wcboost-variation-swatches' )
+				);
+				$html .= sprintf(
+					'<a href="javascript:void(0)" class="button-link button-remove-image %s">
+						<span class="dashicons dashicons-plus-alt2"></span>
+						<span class="screen-reader-text">%s</span>
+					</a>',
+					empty( $args['value'] ) ? 'hidden' : '',
+					esc_html__( 'Remove', 'wcboost-variation-swatches' )
+				);
+				$html .= '</div>';
+				$html .= ! empty( $args['desc'] ) ? '<p class="description">' . esc_html( $args['desc'] ) . '</p>' : '';
+				$html .= sprintf( '<input type="hidden" name="%s" value="%s">', esc_attr( $args['name'] ), esc_attr( $args['value'] ) );
+				$html .= '</div>';
+				break;
+
+			case 'color':
+				if ( is_array( $args['value'] ) && isset( $args['value']['colors'] ) ) {
+					$color = $args['value']['colors'][0];
+				} else {
+					$color = is_array( $args['value'] ) ? current( $args['value'] ) : $args['value'];
+				}
+
+				$html = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-color">';
+				$html .= ! empty( $args['label'] ) ? '<span class="label">' . esc_html( $args['label'] ) . '</span>' : '';
+				$html .= sprintf( '<input type="text" name="%s" value="%s">', esc_attr( $args['name'] ), esc_attr( $color ) );
+				$html .= ! empty( $args['desc'] ) ? '<p class="description">' . esc_html( $args['desc'] ) . '</p>' : '';
+				$html .= '</div>';
+				break;
+
+			case 'label':
+				$html = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-label">';
+				$html .= ! empty( $args['label'] ) ? '<span class="label">' . esc_html( $args['label'] ) . '</span>' : '';
+				$html .= sprintf( '<input type="text" name="%s" value="%s" size="5">', esc_attr( $args['name'] ), esc_attr( $args['value'] ) );
+				$html .= ! empty( $args['desc'] ) ? '<p class="description">' . esc_html( $args['desc'] ) . '</p>' : '';
+				$html .= '</div>';
+				break;
+		}
+
+		$html = apply_filters( 'wcboost_variation_swatches_field_html', $html, $args );
+
+		if ( $args['echo'] ) {
+			echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+
+		return $html;
 	}
 }
 

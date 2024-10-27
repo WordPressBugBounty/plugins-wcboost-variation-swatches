@@ -4,6 +4,36 @@ namespace WCBoost\VariationSwatches;
 defined( 'ABSPATH' ) || exit;
 
 class Helper {
+
+	/**
+	 * Returns an array of all the swatches types.
+	 *
+	 * @since 1.0.18
+	 *
+	 * @return array
+	 */
+	public static function get_swatches_types() {
+		return [
+			'color'  => esc_html__( 'Color', 'wcboost-variation-swatches' ),
+			'image'  => esc_html__( 'Image', 'wcboost-variation-swatches' ),
+			'label'  => esc_html__( 'Label', 'wcboost-variation-swatches' ),
+			'button' => esc_html__( 'Button', 'wcboost-variation-swatches' ),
+		];
+	}
+
+	/**
+	 * Check if a type is a valid swatches type.
+	 *
+	 * @since 1.0.18
+	 *
+	 * @param string $type The type to check.
+	 *
+	 * @return bool True if the type is valid.
+	 */
+	public static function is_swatches_type( $type ) {
+		return array_key_exists( $type, self::get_swatches_types() );
+	}
+
 	/**
 	 * Get attribute swatches meta data from product data.
 	 *
@@ -56,6 +86,7 @@ class Helper {
 	 * Check if an attribute type is custom type that support swatches.
 	 *
 	 * @param object $taxonomy The attribute object
+	 * @param string $context The context of the check, 'view' or 'edit'.
 	 *
 	 * @return bool
 	 */
@@ -64,14 +95,14 @@ class Helper {
 			return false;
 		}
 
-		$swatches_types = array_keys( \WCBoost\VariationSwatches\Admin\Term_Meta::instance()->get_swatches_types() );
+		$is_swatches = self::is_swatches_type( $taxonomy->attribute_type );
 
 		// If this is a check of admin edit area.
 		if ( 'view' !== $context ) {
-			return in_array( $taxonomy->attribute_type, $swatches_types ) && 'button' !== $taxonomy->attribute_type;
+			return $is_swatches && 'button' !== $taxonomy->attribute_type;
 		}
 
-		return in_array( $taxonomy->attribute_type, $swatches_types );
+		return $is_swatches;
 	}
 
 	/**
@@ -80,11 +111,12 @@ class Helper {
 	 *
 	 * @param int   $attachment_id
 	 * @param array $size
+	 * @param bool  $force_crop Force cropping to a custom image size
 	 *
 	 * @return array|bool
 	 */
-	public static function get_image( $attachment_id, $size ) {
-		if ( is_string( $size ) ) {
+	public static function get_image( $attachment_id, $size, $force_crop = false ) {
+		if ( is_string( $size ) || ! $force_crop ) {
 			return wp_get_attachment_image_src( $attachment_id, $size );
 		}
 

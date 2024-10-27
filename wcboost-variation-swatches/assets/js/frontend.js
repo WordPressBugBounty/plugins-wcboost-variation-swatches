@@ -66,10 +66,16 @@
 			return;
 		}
 
-		$swatches.find( '.wcboost-variation-swatches__item.selected' ).removeClass( 'selected' );
+		$swatches.find( '.wcboost-variation-swatches__item.selected' )
+			.removeClass( 'selected' )
+			.attr( 'aria-pressed', false );
 
 		if ( value ) {
-			$swatches.find( '.wcboost-variation-swatches__item' ).filter( function() { return this.dataset.value === value; } ).addClass( 'selected' );
+			$swatches
+				.find( '.wcboost-variation-swatches__item' )
+				.filter( function() { return this.dataset.value === value; } )
+				.addClass( 'selected' )
+				.attr( 'aria-pressed', true );
 		}
 	}
 
