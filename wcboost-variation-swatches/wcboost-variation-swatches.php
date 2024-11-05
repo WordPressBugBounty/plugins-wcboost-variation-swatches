@@ -4,7 +4,7 @@
  * Description: Transform boring dropdown variants into attractive and intuitive swatches, improving user experience and simplifying product selection.
  * Plugin URI: https://wcboost.com/plugin/woocommerce-variation-swatches/
  * Author: WCBoost
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author URI: https://wcboost.com/
  *
  * Text Domain: wcboost-variation-swatches

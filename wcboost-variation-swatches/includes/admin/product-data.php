@@ -339,7 +339,7 @@ class Product_Data {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$variation_swatches = isset( $_POST['wcboost_variation_swatches'] ) ? $_POST['wcboost_variation_swatches'] : [];
 
-		if ( ! empty( $variation_swatches ) || ! is_array( $variation_swatches ) ) {
+		if ( empty( $variation_swatches ) || ! is_array( $variation_swatches ) ) {
 			return;
 		}
 
