@@ -100,9 +100,10 @@
 
 		// Reset if no attributes chosen.
 		if ( ! attributes.chosenCount ) {
-			self.$form.find( '.wcboost-variation-swatches__item' ).removeClass( 'selected disabled' ).data( 'disabled', false ).attr( 'tabindex', 0 );
-
-			// return;
+			self.$form.find( '.wcboost-variation-swatches__item' )
+				.removeClass( 'selected disabled is-invalid' )
+				.data( 'disabled', false )
+				.attr( 'tabindex', 0 );
 		}
 
 		setTimeout( function() {
@@ -116,9 +117,9 @@
 						$option = $select.find( 'option[value="' + $item.data( 'value' ) + '"]' );
 
 					if ( ! $option.length || $option.prop( 'disabled' ) ) {
-						$item.addClass( 'disabled' ).removeClass( 'selected' ).data( 'disabled', true ).attr( 'tabindex', -1 );
+						$item.addClass( 'disabled is-invalid' ).removeClass( 'selected' ).data( 'disabled', true ).attr( 'tabindex', -1 );
 					} else {
-						$item.removeClass( 'disabled' ).data( 'disabled', false ).attr( 'tabindex', 0 );
+						$item.removeClass( 'disabled is-invalid' ).data( 'disabled', false ).attr( 'tabindex', 0 );
 					}
 				} );
 			} );

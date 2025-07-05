@@ -9,15 +9,6 @@ defined( 'ABSPATH' ) || exit;
 final class Plugin {
 
 	/**
-	 * Plugin properties
-	 *
-	 * @since 1.0.17
-	 *
-	 * @var array
-	 */
-	private $props = [];
-
-	/**
 	 * Options mapping object.
 	 *
 	 * @var \WCBoost\VariationSwatches\Mapping
@@ -49,11 +40,7 @@ final class Plugin {
 	public function __get( $prop ) {
 		switch ( $prop ) {
 			case 'version':
-				if ( ! isset( $this->props['version'] ) ) {
-					$plugin = get_plugin_data( WCBOOST_VARIATION_SWATCHES_FILE );
-					$this->props['version'] = $plugin['Version'];
-				}
-				return $this->props['version'];
+				return WCBOOST_VARIATION_SWATCHES_VERSION;
 				break;
 		}
 	}

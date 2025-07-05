@@ -105,7 +105,6 @@ class Swatches {
 		$options   = $args['options'];
 		$product   = $args['product'];
 		$attribute = $args['attribute'];
-		$name      = $args['name'] ? $args['name'] : wc_variation_attribute_name( $attribute );
 
 		if ( empty( $options ) && ! empty( $product ) && ! empty( $attribute ) ) {
 			$attributes = $product->get_variation_attributes();
@@ -115,6 +114,9 @@ class Swatches {
 		if ( empty( $options ) ) {
 			return $html;
 		}
+
+		// Get attribute name.
+		$attribute_name = $args['name'] ? $args['name'] : wc_variation_attribute_name( $attribute );
 
 		// Get per-product swatches settings.
 		$swatches_args = $this->get_swatches_args( $product->get_id(), $attribute );
@@ -158,7 +160,12 @@ class Swatches {
 				$classes[] = 'wcboost-variation-swatches--has-tooltip';
 			}
 
-			$swatches_html = '<ul class="wcboost-variation-swatches__wrapper" data-attribute_name="' . esc_attr( $name ) . '" role="group">' . $swatches_html . '</ul>';
+			$invalid_display = Helper::get_settings( 'invalid_display' );
+			$classes[] = 'wcboost-variation-swatches--invalid-' . $invalid_display;
+
+			$classes = apply_filters( 'wcboost_variation_swatches_classes', $classes, $swatches_args, $attribute_name, $product );
+
+			$swatches_html = '<ul class="wcboost-variation-swatches__wrapper" data-attribute_name="' . esc_attr( $attribute_name ) . '" role="group">' . $swatches_html . '</ul>';
 			$html          = '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">' . $html . $swatches_html . '</div>';
 		}
 

@@ -55,13 +55,18 @@ class Settings {
 	 * @return array
 	 */
 	public function get_settings() {
-		return apply_filters( 'wcboost_variation_swatches_settings_default', [
-			'shape'               => 'round',
-			'size'                => ['width' => 30, 'height' => 30],
-			'tooltip'             => 'yes',
-			'auto_button'         => 'yes',
-			'show_selected_label' => 'no',
-		] );
+		return apply_filters(
+			'wcboost_variation_swatches_settings_default',
+			[
+				'shape'               => 'round',
+				'size'                => ['width' => 30, 'height' => 30],
+				'tooltip'             => 'yes',
+				'auto_button'         => 'yes',
+				'show_selected_label' => 'no',
+				'invalid_display'     => 'blur',
+			],
+			Plugin::instance()->get_mapping()->get_option_value( 'settings' )
+		);
 	}
 
 	/**
@@ -140,10 +145,47 @@ class Settings {
 		] );
 
 		if ( current_theme_supports( 'woocommerce' ) ) {
-			$theme_style = wc_get_theme_support( 'variation_swatches::theme_style' );
+			$default = wc_get_theme_support( 'variation_swatches::theme_style' );
+			$default = $default ? $default : wc_get_theme_support( 'variation_swatches::shape' );
 
-			if ( $theme_style ) {
-				$options = array_merge( [ 'default' => esc_html__( 'Theme Default', 'wcboost-variation-swatches' ) ], $options );
+			if ( $default && ! array_key_exists( $default, $options ) ) {
+				// Only allow 'default' and 'theme' values.
+				$default = in_array( $default, ['default', 'theme'], true ) ? $default : 'default';
+
+				$options = array_merge( [ $default => esc_html__( 'Theme Default', 'wcboost-variation-swatches' ) ], $options );
+			}
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Get the list of invalid display options
+	 *
+	 * @since 1.1.2
+	 *
+	 * @return array
+	 */
+	public function get_invalid_display_options() {
+		$options = apply_filters( 'wcboost_variation_swatches_invalid_display_options', [
+			'hide'       => esc_html__( 'Hide', 'wcboost-variation-swatches' ),
+			'blur'       => esc_html__( 'Blur', 'wcboost-variation-swatches' ),
+			'cross'      => esc_html__( 'Cross out', 'wcboost-variation-swatches' ),
+			'line'       => esc_html__( 'Line through', 'wcboost-variation-swatches' ),
+			'slash'      => esc_html__( 'Slash', 'wcboost-variation-swatches' ),
+			'blur_cross' => esc_html__( 'Blur & Cross out', 'wcboost-variation-swatches' ),
+			'blur_line'  => esc_html__( 'Blur & Line through', 'wcboost-variation-swatches' ),
+			'blur_slash' => esc_html__( 'Blur & Slash', 'wcboost-variation-swatches' ),
+		] );
+
+		if ( current_theme_supports( 'woocommerce' ) ) {
+			$default = wc_get_theme_support( 'variation_swatches::invalid_display' );
+
+			if ( $default && ! array_key_exists( $default, $options ) ) {
+				// Only allow 'default' and 'theme' values.
+				$default = in_array( $default, ['default', 'theme'], true ) ? $default : 'default';
+
+				$options = array_merge( [ $default => esc_html__( 'Theme Default', 'wcboost-variation-swatches' ) ], $options );
 			}
 		}
 
@@ -199,6 +241,20 @@ class Settings {
 			'width'  => absint( $width ),
 			'height' => absint( $height ),
 		];
+	}
+
+	/**
+	 * Sanitize the invalid display option
+	 *
+	 * @since 1.1.2
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	public function sanitize_invalid_display( $value ) {
+		$options = array_keys( $this->get_invalid_display_options() );
+
+		return in_array( $value, $options ) ? $value : 'blur';
 	}
 }
 

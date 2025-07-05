@@ -94,6 +94,27 @@ class Customizer {
 		);
 
 		$wp_customize->add_setting(
+			$this->settings_api->get_option_name( 'invalid_display' ),
+			[
+				'default'              => $this->settings_api->get_default( 'invalid_display' ),
+				'type'                 => 'option',
+				'capability'           => 'manage_woocommerce',
+				'sanitize_callback'    => [ $this->settings_api, 'sanitize_invalid_display' ],
+			]
+		);
+
+		$wp_customize->add_control(
+			$this->settings_api->get_option_name( 'invalid_display' ),
+			[
+				'label'       => esc_html__( 'Invalid swatches display', 'wcboost-variation-swatches' ),
+				'description' => esc_html__( 'Choose how to display invalid/unavailable swatches', 'wcboost-variation-swatches' ),
+				'section'     => static::SECTION,
+				'type'        => 'select',
+				'choices'     => $this->settings_api->get_invalid_display_options(),
+			]
+		);
+
+		$wp_customize->add_setting(
 			$this->settings_api->get_option_name( 'tooltip' ),
 			[
 				'default'              => $this->settings_api->get_default( 'tooltip' ),

@@ -119,6 +119,7 @@ tr.form-field .wcboost-variation-swatches__field-image-controls .button-remove-i
 .wcboost-variation-swatches__field-label input[type="text"] {
 	max-width: 60px;
 	text-align: center;
+	font-weight: 700;
 }
 
 /** Product Data */

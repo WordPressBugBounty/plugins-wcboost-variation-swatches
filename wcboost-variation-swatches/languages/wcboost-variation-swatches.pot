@@ -1,36 +1,41 @@
-# Copyright (C) 2024 WCBoost
+# Copyright (C) 2025 WCBoost
 # This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WCBoost - Variation Swatches 1.1.0\n"
+"Project-Id-Version: WCBoost - Variation Swatches 1.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wcboost-variation-swatches\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-27T14:25:48+00:00\n"
+"POT-Creation-Date: 2025-07-05T08:28:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.9.0\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: wcboost-variation-swatches\n"
 
 #. Plugin Name of the plugin
+#: wcboost-variation-swatches.php
 msgid "WCBoost - Variation Swatches"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: wcboost-variation-swatches.php
 msgid "https://wcboost.com/plugin/woocommerce-variation-swatches/"
 msgstr ""
 
 #. Description of the plugin
+#: wcboost-variation-swatches.php
 msgid "Transform boring dropdown variants into attractive and intuitive swatches, improving user experience and simplifying product selection."
 msgstr ""
 
 #. Author of the plugin
+#: wcboost-variation-swatches.php
 msgid "WCBoost"
 msgstr ""
 
 #. Author URI of the plugin
+#: wcboost-variation-swatches.php
 msgid "https://wcboost.com/"
 msgstr ""
 
@@ -187,20 +192,53 @@ msgstr ""
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/settings.php:137
+#: includes/admin/settings.php:142
 msgid "Circle"
 msgstr ""
 
-#: includes/admin/settings.php:138
+#: includes/admin/settings.php:143
 msgid "Rounded corners"
 msgstr ""
 
-#: includes/admin/settings.php:139
+#: includes/admin/settings.php:144
 msgid "Square"
 msgstr ""
 
-#: includes/admin/settings.php:146
+#: includes/admin/settings.php:155
+#: includes/admin/settings.php:188
 msgid "Theme Default"
+msgstr ""
+
+#: includes/admin/settings.php:171
+msgid "Hide"
+msgstr ""
+
+#: includes/admin/settings.php:172
+msgid "Blur"
+msgstr ""
+
+#: includes/admin/settings.php:173
+msgid "Cross out"
+msgstr ""
+
+#: includes/admin/settings.php:174
+msgid "Line through"
+msgstr ""
+
+#: includes/admin/settings.php:175
+msgid "Slash"
+msgstr ""
+
+#: includes/admin/settings.php:176
+msgid "Blur & Cross out"
+msgstr ""
+
+#: includes/admin/settings.php:177
+msgid "Blur & Line through"
+msgstr ""
+
+#: includes/admin/settings.php:178
+msgid "Blur & Slash"
 msgstr ""
 
 #: includes/admin/term-meta.php:131
@@ -261,15 +299,23 @@ msgstr ""
 msgid "Set the default size of variation swatches."
 msgstr ""
 
+#: includes/customizer/customizer.php:109
+msgid "Invalid swatches display"
+msgstr ""
+
 #: includes/customizer/customizer.php:110
+msgid "Choose how to display invalid/unavailable swatches"
+msgstr ""
+
+#: includes/customizer/customizer.php:131
 msgid "Enable tooltip"
 msgstr ""
 
-#: includes/customizer/customizer.php:130
+#: includes/customizer/customizer.php:151
 msgid "Convert default dropdowns to buttons"
 msgstr ""
 
-#: includes/customizer/customizer.php:150
+#: includes/customizer/customizer.php:171
 msgid "Show the selected attribute's label"
 msgstr ""
 
@@ -277,22 +323,22 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: includes/plugin.php:168
+#: includes/plugin.php:155
 msgid "Go Pro"
 msgstr ""
 
-#: includes/plugin.php:192
+#: includes/plugin.php:179
 msgid "View plugin documentation"
 msgstr ""
 
-#: includes/plugin.php:192
+#: includes/plugin.php:179
 msgid "Docs"
 msgstr ""
 
-#: includes/plugin.php:193
+#: includes/plugin.php:180
 msgid "Visit community support forums"
 msgstr ""
 
-#: includes/plugin.php:193
+#: includes/plugin.php:180
 msgid "Community support"
 msgstr ""
