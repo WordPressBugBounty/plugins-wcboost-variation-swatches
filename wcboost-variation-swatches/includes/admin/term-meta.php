@@ -1,4 +1,10 @@
 <?php
+/**
+ * Term meta management for swatches.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches\Admin;
 
 defined( 'ABSPATH' ) || exit;
@@ -6,6 +12,11 @@ defined( 'ABSPATH' ) || exit;
 use WCBoost\VariationSwatches\Helper;
 use WCBoost\VariationSwatches\Plugin;
 
+/**
+ * Class Term_Meta
+ *
+ * Handles the admin term meta fields for attribute swatches.
+ */
 class Term_Meta {
 	const COLOR_META_KEY = 'swatches_color';
 	const LABEL_META_KEY = 'swatches_label';
@@ -20,9 +31,9 @@ class Term_Meta {
 	 * @access protected
 	 * @static
 	 *
-	 * @var WCBoost\VariationSwatches\Admin\Term_Meta
+	 * @var static
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore WordPress.NamingConventions.PrefixNonPrefixed, PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Instance.
@@ -33,10 +44,10 @@ class Term_Meta {
 	 * @access public
 	 * @static
 	 *
-	 * @return WCBoost\VariationSwatches\Admin\Term_Meta An instance of the class.
+	 * @return static
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -74,7 +85,7 @@ class Term_Meta {
 	 * Add extra attribute types
 	 * Add color, image and label type
 	 *
-	 * @param array $types
+	 * @param array $types The existing attribute types.
 	 *
 	 * @return array
 	 */
@@ -115,7 +126,7 @@ class Term_Meta {
 	/**
 	 * Create hook to add fields to add attribute term screen
 	 *
-	 * @param string $taxonomy
+	 * @param string $taxonomy The taxonomy name.
 	 */
 	public function add_attribute_fields( $taxonomy ) {
 		$attribute = Helper::get_attribute_taxonomy( $taxonomy );
@@ -128,7 +139,7 @@ class Term_Meta {
 		<div class="form-field term-swatches-wrap">
 			<label><?php echo esc_html( $this->field_label( $attribute->attribute_type ) ); ?></label>
 			<?php $this->field_input( $attribute->attribute_type ); ?>
-			<p class="description"><?php esc_html_e( 'This data will be used for variation swatches of variable products.', 'wcboost-variation-swatches' ) ?></p>
+			<p class="description"><?php esc_html_e( 'This data will be used for variation swatches of variable products.', 'wcboost-variation-swatches' ); ?></p>
 		</div>
 
 		<?php
@@ -137,8 +148,8 @@ class Term_Meta {
 	/**
 	 * Create hook to fields to edit attribute term screen
 	 *
-	 * @param object $term
-	 * @param string $taxonomy
+	 * @param object $term     The term object.
+	 * @param string $taxonomy The taxonomy name.
 	 */
 	public function edit_attribute_fields( $term, $taxonomy ) {
 		$attribute = Helper::get_attribute_taxonomy( $taxonomy );
@@ -154,7 +165,7 @@ class Term_Meta {
 			</th>
 			<td>
 				<?php $this->field_input( $attribute->attribute_type, $term ); ?>
-				<p class="description"><?php esc_html_e( 'This data will be used for variation swatches of variable products.', 'wcboost-variation-swatches' ) ?></p>
+				<p class="description"><?php esc_html_e( 'This data will be used for variation swatches of variable products.', 'wcboost-variation-swatches' ); ?></p>
 			</td>
 		</tr>
 
@@ -164,7 +175,7 @@ class Term_Meta {
 	/**
 	 * Get the field label
 	 *
-	 * @param string $type
+	 * @param string $type The swatch type.
 	 * @return string
 	 */
 	public function field_label( $type ) {
@@ -184,7 +195,7 @@ class Term_Meta {
 	/**
 	 * Field name
 	 *
-	 * @param string $type
+	 * @param string $type The swatch type.
 	 * @return string
 	 */
 	protected function field_name( $type ) {
@@ -194,11 +205,11 @@ class Term_Meta {
 	/**
 	 * The input to edit swatches data
 	 *
-	 * @param string $type
-	 * @param object|null $term
+	 * @param string      $type The swatch type.
+	 * @param object|null $term The term object.
 	 */
 	public function field_input( $type, $term = null ) {
-		if ( ! in_array( $type, [ 'image', 'color', 'label' ] ) ) {
+		if ( ! in_array( $type, [ 'image', 'color', 'label' ], true ) ) {
 			return;
 		}
 
@@ -224,7 +235,7 @@ class Term_Meta {
 	/**
 	 * Save term meta
 	 *
-	 * @param int $term_id
+	 * @param int $term_id The term ID.
 	 */
 	public function save_term_meta( $term_id ) {
 		$types = $this->get_swatches_types();
@@ -242,7 +253,7 @@ class Term_Meta {
 	/**
 	 * Add thumbnail column to column list
 	 *
-	 * @param array $columns
+	 * @param array $columns The existing columns.
 	 *
 	 * @return array
 	 */
@@ -273,12 +284,12 @@ class Term_Meta {
 	/**
 	 * Render thumbnail HTML depend on attribute type
 	 *
-	 * @param string $content
-	 * @param string $column
-	 * @param int $term_id
+	 * @param string $content The column content.
+	 * @param string $column  The column name.
+	 * @param int    $term_id The term ID.
 	 */
 	public function add_attribute_column_content( $content, $column, $term_id ) {
-		if ( 'thumb' != $column ) {
+		if ( 'thumb' !== $column ) {
 			return;
 		}
 
@@ -332,11 +343,11 @@ class Term_Meta {
 	/**
 	 * Insert a new attribute with swatches data
 	 *
-	 * @param string $name
-	 * @param string $tax
-	 * @param array $data
+	 * @param string $name The term name.
+	 * @param string $tax  The taxonomy name.
+	 * @param array  $data The swatches data.
 	 *
-	 * @return array|WP_Error
+	 * @return array|\WP_Error
 	 */
 	public function insert_term( $name, $tax, $data = [] ) {
 		$term = wp_insert_term( $name, $tax );
@@ -355,9 +366,9 @@ class Term_Meta {
 	/**
 	 * Update attribute swatches
 	 *
-	 * @param int $term_id
-	 * @param string $type
-	 * @param mixed $value
+	 * @param int    $term_id The term ID.
+	 * @param string $type    The swatch type.
+	 * @param mixed  $value   The swatch value.
 	 * @return void
 	 */
 	public function update_meta( $term_id, $type, $value ) {
@@ -375,8 +386,8 @@ class Term_Meta {
 	/**
 	 * Get term meta.
 	 *
-	 * @param int $term_id
-	 * @param string $type
+	 * @param int    $term_id The term ID.
+	 * @param string $type    The swatch type.
 	 * @return mixed
 	 */
 	public function get_meta( $term_id, $type ) {
@@ -426,7 +437,7 @@ class Term_Meta {
 	/**
 	 * Get meta key base type.
 	 *
-	 * @param string $type
+	 * @param string $type The swatch type.
 	 * @return string
 	 */
 	public function get_meta_key( $type ) {
@@ -456,6 +467,7 @@ class Term_Meta {
 	 *
 	 * @since 1.0.18
 	 *
+	 * @phpcs:ignore Squiz.Commenting.FunctionComment.ParamCommentFullStop
 	 * @param array $args {
 	 *     @type string $type Type of the swatch field (color, image, label).
 	 *     @type string $name The name of the field.
@@ -476,7 +488,7 @@ class Term_Meta {
 			'echo'  => true,
 		]);
 
-		if ( empty( $args['name'] ) )  {
+		if ( empty( $args['name'] ) ) {
 			return;
 		}
 
@@ -488,7 +500,7 @@ class Term_Meta {
 				$image_src   = $args['value'] ? wp_get_attachment_image_url( $args['value'] ) : false;
 				$image_src   = $image_src ? $image_src : $placeholder;
 
-				$html = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-image ' . ( empty( $args['value'] ) ? 'is-empty' : '' ) . '">';
+				$html  = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-image ' . ( empty( $args['value'] ) ? 'is-empty' : '' ) . '">';
 				$html .= ! empty( $args['label'] ) ? '<span class="label">' . esc_html( $args['label'] ) . '</span>' : '';
 				$html .= '<div class="wcboost-variation-swatches__field-image-controls">';
 				$html .= sprintf( '<img src="%s" data-placeholder="%s" width="60" height="60">', esc_url( $image_src ), esc_url( $placeholder ) );
@@ -522,7 +534,7 @@ class Term_Meta {
 					$color = is_array( $args['value'] ) ? current( $args['value'] ) : $args['value'];
 				}
 
-				$html = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-color">';
+				$html  = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-color">';
 				$html .= ! empty( $args['label'] ) ? '<span class="label">' . esc_html( $args['label'] ) . '</span>' : '';
 				$html .= sprintf( '<input type="text" name="%s" value="%s">', esc_attr( $args['name'] ), esc_attr( $color ) );
 				$html .= ! empty( $args['desc'] ) ? '<p class="description">' . esc_html( $args['desc'] ) . '</p>' : '';
@@ -530,7 +542,7 @@ class Term_Meta {
 				break;
 
 			case 'label':
-				$html = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-label">';
+				$html  = '<div class="wcboost-variation-swatches-field wcboost-variation-swatches__field-label">';
 				$html .= ! empty( $args['label'] ) ? '<span class="label">' . esc_html( $args['label'] ) . '</span>' : '';
 				$html .= sprintf( '<input type="text" name="%s" value="%s" size="5">', esc_attr( $args['name'] ), esc_attr( $args['value'] ) );
 				$html .= ! empty( $args['desc'] ) ? '<p class="description">' . esc_html( $args['desc'] ) . '</p>' : '';

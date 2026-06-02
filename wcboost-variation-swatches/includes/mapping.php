@@ -1,10 +1,21 @@
 <?php
+/**
+ * Mapping layer for compatibility with other swatches plugins.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches;
 
 defined( 'ABSPATH' ) || exit;
 
 use WCBoost\VariationSwatches\Admin\Settings;
 
+/**
+ * Class Mapping
+ *
+ * Handles the mapping of settings and meta from competing swatches plugins.
+ */
 class Mapping {
 	/**
 	 * List of supported plugins
@@ -26,12 +37,12 @@ class Mapping {
 	public function __construct() {
 		$this->define_supports();
 
-		// Default term meta args
+		// Default term meta args.
 		$this->default_product_meta = [
 			'type'        => '',
 			'shape'       => '',
 			'size'        => '',
-			'custom_size' => ['width' => '', 'height' => ''],
+			'custom_size' => [ 'width' => '', 'height' => '' ],
 			'swatches'    => [],
 		];
 	}
@@ -43,8 +54,8 @@ class Mapping {
 	 */
 	public function define_supports() {
 		$this->add_plugin( 'wcboost-variaiton-swatches', [
-			'priority' => 1,
-			'settings' => [
+			'priority'     => 1,
+			'settings'     => [
 				'shape'               => 'wcboost_variaiton_swatches_shape',
 				'size'                => 'wcboost_variaiton_swatches_size',
 				'tooltip'             => 'wcboost_variaiton_swatches_tooltip',
@@ -64,8 +75,8 @@ class Mapping {
 		] );
 
 		$this->add_plugin( 'woo-variation-swatches', [
-			'priority' => 5,
-			'settings' => [
+			'priority'       => 5,
+			'settings'       => [
 				'shape'       => 'woo_variation_swatches[style]',
 				'tooltip'     => 'woo_variation_swatches[tooltip]',
 				'auto_button' => 'woo_variation_swatches[default_to_button]',
@@ -77,13 +88,13 @@ class Mapping {
 		] );
 
 		$this->add_plugin( 'variation-swatches-for-woocommerce-pro', [
-			'priority' => 10,
-			'settings' => [
+			'priority'       => 10,
+			'settings'       => [
 				'shape'   => 'tawcvs_swatch_style',
 				'size'    => 'tawcvs_swatch_image_size',
 				'tooltip' => 'tawcvs_swatch_tooltip',
 			],
-			'product_meta' => [
+			'product_meta'   => [
 				'key' => 'tawcvs_swatches',
 				'map' => [
 					'type'        => 'type',
@@ -105,8 +116,8 @@ class Mapping {
 	 * Add a new plugin to the mapping list then sort all plugins again.
 	 * Update plugin options if it is exists. Otherwise add a new one.
 	 *
-	 * @param string $plugin_name
-	 * @param array $options
+	 * @param string $plugin_name The plugin slug.
+	 * @param array  $options     Plugin configuration options.
 	 * @return void
 	 */
 	public function add_plugin( $plugin_name, $options ) {
@@ -140,8 +151,8 @@ class Mapping {
 	/**
 	 * The callback funciton of `uasort` to sort plugins.
 	 *
-	 * @param array $first
-	 * @param array $second
+	 * @param array $first  First plugin configuration.
+	 * @param array $second Second plugin configuration.
 	 * @return bool
 	 */
 	public function compare_plugins_priority( $first, $second ) {
@@ -149,9 +160,9 @@ class Mapping {
 	}
 
 	/**
-	 * Get mapped option names
+	 * Get mapped option names.
 	 *
-	 * @param string $option
+	 * @param string $option The option name.
 	 * @return array
 	 */
 	public function get_option_names( $option ) {
@@ -170,7 +181,7 @@ class Mapping {
 	 * Get the option value from mapped option names.
 	 * Return the first found value.
 	 *
-	 * @param string $option
+	 * @param string $option The option name.
 	 * @return mixed
 	 */
 	public function get_option_value( $option ) {
@@ -224,7 +235,8 @@ class Mapping {
 	 * Get the meta value from mapped meta keys.
 	 * Return the first found value.
 	 *
-	 * @param string $name The meta suboption name.
+	 * @param string $attribute_name The attribute name.
+	 * @param int    $product_id     The product ID.
 	 * @return mixed
 	 */
 	public function get_meta_value( $attribute_name, $product_id = null ) {
@@ -244,7 +256,7 @@ class Mapping {
 	/**
 	 * Get the full swatches meta data for a product from mapped meta keys.
 	 *
-	 * @param int $product_id
+	 * @param int $product_id The product ID.
 	 * @return array
 	 */
 	public function get_product_meta( $product_id ) {
@@ -263,7 +275,7 @@ class Mapping {
 			}
 		}
 
-		//Return if no meta found.
+		// Return if no meta found.
 		if ( empty( $meta ) ) {
 			return false;
 		}
@@ -282,7 +294,7 @@ class Mapping {
 					$value = call_user_func_array( [ $this, 'sanitize_' . strtolower( $key ) ], [ $value ] );
 				}
 
-				if ( 'custom_size' == $key ) {
+				if ( 'custom_size' === $key ) {
 					$value = $this->sanitize_size( $value );
 				}
 
@@ -296,9 +308,9 @@ class Mapping {
 	/**
 	 * Get term meta from mapped plugins.
 	 *
-	 * @param int $term_id
-	 * @param string $type
-	 * @return mixed Return FALSE if there is no metadata
+	 * @param int    $term_id The term ID.
+	 * @param string $type    The meta type.
+	 * @return mixed Return FALSE if there is no metadata.
 	 */
 	public function get_attribute_meta( $term_id, $type ) {
 		foreach ( $this->plugins as $plugin ) {
@@ -313,7 +325,7 @@ class Mapping {
 			}
 		}
 
-		//Return if no meta found.
+		// Return if no meta found.
 		if ( empty( $meta ) ) {
 			return false;
 		}
@@ -327,9 +339,9 @@ class Mapping {
 	}
 
 	/**
-	 * Sanitize the size option
+	 * Sanitize the type option.
 	 *
-	 * @param string $type
+	 * @param string $value The value to sanitize.
 	 * @return string
 	 */
 	public function sanitize_type( $value ) {
@@ -337,14 +349,14 @@ class Mapping {
 	}
 
 	/**
-	 * Sanitize the size option
+	 * Sanitize the size option.
 	 *
-	 * @param string|array $size
+	 * @param string|array $value The value to sanitize.
 	 * @return string|array
 	 */
 	public function sanitize_size( $value ) {
 		if ( is_string( $value ) ) {
-			return empty( $value ) || 'custom' == $value ? $value : '';
+			return empty( $value ) || 'custom' === $value ? $value : '';
 		} elseif ( is_array( $value ) ) {
 			return Settings::instance()->sanitize_size( $value );
 		}
@@ -353,14 +365,14 @@ class Mapping {
 	}
 
 	/**
-	 * Sanitize the shape option
+	 * Sanitize the shape option.
 	 *
-	 * @param string $shape
+	 * @param string $value The value to sanitize.
 	 * @return string
 	 */
 	public function sanitize_shape( $value ) {
 		// Convert 'square' option of Woo Variation Swatches plugin.
-		$value = 'squared' == $value ? 'square' : $value;
+		$value = 'squared' === $value ? 'square' : $value;
 
 		return Settings::instance()->sanitize_shape( $value );
 	}

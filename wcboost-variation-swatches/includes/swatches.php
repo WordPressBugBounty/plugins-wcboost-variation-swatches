@@ -1,7 +1,10 @@
 <?php
 /**
  * Display attribute swatches
+ *
+ * @package WCBoost\VariationSwatches
  */
+
 namespace WCBoost\VariationSwatches;
 
 defined( 'ABSPATH' ) || exit;
@@ -9,21 +12,24 @@ defined( 'ABSPATH' ) || exit;
 use WCBoost\VariationSwatches\Helper;
 use WCBoost\VariationSwatches\Admin\Term_Meta;
 
+/**
+ * Display attribute swatches.
+ */
 class Swatches {
 	/**
 	 * The single instance of the class
 	 *
-	 * @var WCBoost\VariationSwatches\Swatches
+	 * @var static
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Main instance
 	 *
-	 * @return WCBoost\VariationSwatches\Swatches
+	 * @return static
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -94,10 +100,10 @@ class Swatches {
 	}
 
 	/**
-	 * Filter function to add swatches bellow the default selector
+	 * Filter function to add swatches bellow the default selector.
 	 *
-	 * @param $html
-	 * @param $args
+	 * @param string $html The default select HTML.
+	 * @param array  $args Arguments passed to the dropdown.
 	 *
 	 * @return string
 	 */
@@ -150,10 +156,10 @@ class Swatches {
 		}
 
 		if ( ! empty( $swatches_html ) ) {
-			$classes       = [
+			$classes = [
 				'wcboost-variation-swatches',
 				'wcboost-variation-swatches--' . $swatches_args['swatches_type'],
-				'wcboost-variation-swatches--' . $swatches_args['swatches_shape']
+				'wcboost-variation-swatches--' . $swatches_args['swatches_shape'],
 			];
 
 			if ( $swatches_args['swatches_tooltip'] ) {
@@ -161,7 +167,7 @@ class Swatches {
 			}
 
 			$invalid_display = Helper::get_settings( 'invalid_display' );
-			$classes[] = 'wcboost-variation-swatches--invalid-' . $invalid_display;
+			$classes[]       = 'wcboost-variation-swatches--invalid-' . $invalid_display;
 
 			$classes = apply_filters( 'wcboost_variation_swatches_classes', $classes, $swatches_args, $attribute_name, $product );
 
@@ -173,10 +179,10 @@ class Swatches {
 	}
 
 	/**
-	 * Get HTML of a single attribute term swatches
+	 * Get HTML of a single attribute term swatches.
 	 *
-	 * @param object|string $term
-	 * @param array $args
+	 * @param object|string $term Term object or slug.
+	 * @param array         $args Swatches arguments.
 	 * @return string
 	 */
 	public function get_term_swatches( $term, $args ) {
@@ -188,10 +194,10 @@ class Swatches {
 		$html  = '';
 
 		if ( is_object( $term ) ) {
-			$selected = sanitize_title( $args['selected'] ) == $value;
+			$selected = sanitize_title( $args['selected'] ) === $value;
 		} else {
 			// This handles < 2.4.0 bw compatibility where text attributes were not sanitized.
-			$selected = sanitize_title( $args['selected'] ) === $args['selected'] ? $args['selected'] == sanitize_title( $value ) : $args['selected'] == $value;
+			$selected = sanitize_title( $args['selected'] ) === $args['selected'] ? $args['selected'] === $value : $args['selected'] === $value;
 		}
 
 		$data = $this->get_attribute_swatches_data( $term, $args );
@@ -271,10 +277,10 @@ class Swatches {
 	}
 
 	/**
-	 * Get attribute swatches args
+	 * Get attribute swatches args.
 	 *
-	 * @param int $product_id   Product ID
-	 * @param string $attribute Attribute name
+	 * @param int    $product_id   Product ID.
+	 * @param string $attribute Attribute name.
 	 *
 	 * @return array
 	 */
@@ -286,16 +292,16 @@ class Swatches {
 			$swatches_args = [
 				'swatches_type'       => $swatches_meta[ $attribute_key ]['type'],
 				'swatches_shape'      => $swatches_meta[ $attribute_key ]['shape'],
-				'swatches_size'       => 'custom' == $swatches_meta[ $attribute_key ]['size'] ? $swatches_meta[ $attribute_key ]['custom_size'] : '',
+				'swatches_size'       => 'custom' === $swatches_meta[ $attribute_key ]['size'] ? $swatches_meta[ $attribute_key ]['custom_size'] : '',
 				'swatches_attributes' => $swatches_meta[ $attribute_key ]['swatches'],
 			];
 
 			if ( Helper::is_default( $swatches_args['swatches_type'] ) ) {
-				$swatches_args['swatches_type'] = taxonomy_exists( $attribute ) ? Helper::get_attribute_taxonomy( $attribute )->attribute_type : 'select';
+				$swatches_args['swatches_type']       = taxonomy_exists( $attribute ) ? Helper::get_attribute_taxonomy( $attribute )->attribute_type : 'select';
 				$swatches_args['swatches_attributes'] = [];
 
 				// Auto convert dropdowns to buttons.
-				if ( 'select' == $swatches_args['swatches_type'] && wc_string_to_bool( Helper::get_settings( 'auto_button' ) ) ) {
+				if ( 'select' === $swatches_args['swatches_type'] && wc_string_to_bool( Helper::get_settings( 'auto_button' ) ) ) {
 					$swatches_args['swatches_type'] = 'button';
 				}
 			} else {
@@ -314,7 +320,7 @@ class Swatches {
 			];
 
 			// Auto convert dropdowns to buttons.
-			if ( 'select' == $swatches_args['swatches_type'] && wc_string_to_bool( Helper::get_settings( 'auto_button' ) ) ) {
+			if ( 'select' === $swatches_args['swatches_type'] && wc_string_to_bool( Helper::get_settings( 'auto_button' ) ) ) {
 				$swatches_args['swatches_type'] = 'button';
 			}
 		}
@@ -322,14 +328,14 @@ class Swatches {
 		$swatches_args['swatches_tooltip']    = wc_string_to_bool( Helper::get_settings( 'tooltip' ) );
 		$swatches_args['swatches_image_size'] = $swatches_args['swatches_size'] ? $swatches_args['swatches_size'] : Helper::get_settings( 'size' );
 
-		return apply_filters( 'wcboost_variation_swatches_item_args', $swatches_args, $attribute, $product_id, );
+		return apply_filters( 'wcboost_variation_swatches_item_args', $swatches_args, $attribute, $product_id );
 	}
 
 	/**
 	 * Get attribute swatches data
 	 *
-	 * @param object|string  $term Term object or name (with custom attributes).
-	 * @param array  $args Swatches args.
+	 * @param object|string $term Term object or name (with custom attributes).
+	 * @param array         $args Swatches args.
 	 *
 	 * @return array {
 	 *     @type string $type The swatches type.
@@ -358,7 +364,7 @@ class Swatches {
 
 		$data['value'] = $value;
 
-		if ( 'image' == $type ) {
+		if ( 'image' === $type ) {
 			if ( ! $value ) {
 				$image_src = wc_placeholder_img_src( 'thumbnail' );
 			} else {

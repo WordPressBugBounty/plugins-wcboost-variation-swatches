@@ -1,8 +1,17 @@
 <?php
+/**
+ * Backup and restore functionality for attribute types.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Backup and restore attribute types.
+ */
 class Backup {
 	/**
 	 * Instance.
@@ -13,9 +22,9 @@ class Backup {
 	 * @access protected
 	 * @static
 	 *
-	 * @var WCBoost\VariationSwatches\Admin\Backup
+	 * @var static
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Instance.
@@ -26,10 +35,10 @@ class Backup {
 	 * @access public
 	 * @static
 	 *
-	 * @return WCBoost\VariationSwatches\Admin\Backup An instance of the class.
+	 * @return static An instance of the class.
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -64,7 +73,7 @@ class Backup {
 	public function restore_attributes_backup_notice() {
 		global $current_screen;
 
-		if ( $current_screen && $current_screen->base != 'product_page_product_attributes' ) {
+		if ( $current_screen && 'product_page_product_attributes' !== $current_screen->base ) {
 			return;
 		}
 
@@ -81,17 +90,17 @@ class Backup {
 					?>
 				</p>
 				<p>
-					<a href="<?php echo esc_url( add_query_arg( [ 'action' => 'wcboost_variation_swatches_restore_backup', '_wpnonce' => wp_create_nonce( 'wcboost_variation_swatches_restore_backup' ) ] ) ) ?>"><?php esc_html_e( 'Restore attributes', 'wcboost-variation-swatches' ) ?></a> |
-					<a href="<?php echo esc_url( add_query_arg( [ 'action' => 'wcboost_variation_swatches_ignore_backup', '_wpnonce' => wp_create_nonce( 'wcboost_variation_swatches_ignore_backup' ) ] ) ) ?>"><?php esc_html_e( 'Ignore', 'wcboost-variation-swatches' ) ?></a>
+					<a href="<?php echo esc_url( add_query_arg( [ 'action' => 'wcboost_variation_swatches_restore_backup', '_wpnonce' => wp_create_nonce( 'wcboost_variation_swatches_restore_backup' ) ] ) ); ?>"><?php esc_html_e( 'Restore attributes', 'wcboost-variation-swatches' ); ?></a> |
+					<a href="<?php echo esc_url( add_query_arg( [ 'action' => 'wcboost_variation_swatches_ignore_backup', '_wpnonce' => wp_create_nonce( 'wcboost_variation_swatches_ignore_backup' ) ] ) ); ?>"><?php esc_html_e( 'Ignore', 'wcboost-variation-swatches' ); ?></a>
 				</p>
 			</div>
 			<?php
 		}
 
-		if ( ! $backup && isset( $_GET['message'] ) && 'wcboost_variation_swatches_restored_backup' == wp_unslash( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! $backup && isset( $_GET['message'] ) && 'wcboost_variation_swatches_restored_backup' === wp_unslash( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			?>
 			<div class="notice notice-success is-dismissible">
-				<p><?php esc_html_e( 'All attribute types have been restored.', 'wcboost-variation-swatches' ) ?></p>
+				<p><?php esc_html_e( 'All attribute types have been restored.', 'wcboost-variation-swatches' ); ?></p>
 			</div>
 			<?php
 		}
@@ -101,7 +110,7 @@ class Backup {
 	 * Handle the request of restoring attributes backup
 	 */
 	public function handle_restore_request() {
-		if ( ! isset( $_GET['action'] ) || ! isset( $_GET['_wpnonce'] ) || 'wcboost_variation_swatches_restore_backup' != $_GET['action'] ) {
+		if ( ! isset( $_GET['action'] ) || ! isset( $_GET['_wpnonce'] ) || 'wcboost_variation_swatches_restore_backup' !== $_GET['action'] ) {
 			return;
 		}
 
@@ -115,7 +124,7 @@ class Backup {
 			$url = remove_query_arg( [ 'action', '_wpnonce' ] );
 			$url = add_query_arg( [ 'message' => 'wcboost_variation_swatches_restored_backup' ], $url );
 
-			wp_redirect( $url );
+			wp_safe_redirect( $url );
 			exit;
 		}
 	}
@@ -124,7 +133,7 @@ class Backup {
 	 * Handle the request of ignoring restore attributes backup
 	 */
 	public function handle_ignore_request() {
-		if ( ! isset( $_GET['action'] ) || ! isset( $_GET['_wpnonce'] ) || 'wcboost_variation_swatches_ignore_backup' != $_GET['action'] ) {
+		if ( ! isset( $_GET['action'] ) || ! isset( $_GET['_wpnonce'] ) || 'wcboost_variation_swatches_ignore_backup' !== $_GET['action'] ) {
 			return;
 		}
 
@@ -137,7 +146,7 @@ class Backup {
 		if ( $success ) {
 			$url = remove_query_arg( [ 'action', '_wpnonce' ] );
 
-			wp_redirect( $url );
+			wp_safe_redirect( $url );
 			exit;
 		}
 	}
@@ -200,7 +209,7 @@ class Backup {
 		];
 
 		foreach ( $attributes as $attribute ) {
-			if ( ! in_array( $attribute->attribute_type, [ 'text', 'select' ] ) ) {
+			if ( ! in_array( $attribute->attribute_type, [ 'text', 'select' ], true ) ) {
 				$backup['attributes'][ $attribute->attribute_id ] = $attribute;
 			}
 		}
@@ -238,7 +247,7 @@ class Backup {
 	 * Add custom columns of variation swatches to product exports.
 	 * Format: column_slug => Column Name
 	 *
-	 * @param array $columns
+	 * @param array $columns List of export columns.
 	 * @return array
 	 */
 	public function add_import_export_columns( $columns ) {
@@ -252,7 +261,7 @@ class Backup {
 	 * Add default import columns.
 	 * Format: Column Name => column_slug
 	 *
-	 * @param array $columns
+	 * @param array $columns List of import columns.
 	 * @return array
 	 */
 	public function add_column_to_mapping_screen( $columns ) {
@@ -265,8 +274,8 @@ class Backup {
 	/**
 	 * Add custom data of attribute swatches to product exports
 	 *
-	 * @param string $value
-	 * @param object $product
+	 * @param string $value   Column value.
+	 * @param object $product Product object.
 	 *
 	 * @return string
 	 */
@@ -300,8 +309,8 @@ class Backup {
 	/**
 	 * Add custom data of attribute swatches to product exports
 	 *
-	 * @param string $value
-	 * @param object $product
+	 * @param string $value   Column value.
+	 * @param object $product Product object.
 	 *
 	 * @return string
 	 */
@@ -327,20 +336,20 @@ class Backup {
 			$name  = wc_attribute_label( $attribute->get_name(), $product );
 			$terms = $attribute->get_terms();
 
-			if ( ! array_key_exists( $name, $types ) && $attr->type !== 'select' ) {
-				$types[ $name ]            = [];
-				$types[ $name ][ 'name' ]  = $name;
-				$types[ $name ][ 'type' ]  = $attr->type;
-				$types[ $name ][ 'terms' ] = [];
+			if ( ! array_key_exists( $name, $types ) && 'select' !== $attr->type ) {
+				$types[ $name ]          = [];
+				$types[ $name ]['name']  = $name;
+				$types[ $name ]['type']  = $attr->type;
+				$types[ $name ]['terms'] = [];
 
 				foreach ( $terms as $term ) {
-					$types[ $name ][ 'terms' ][ $term->name ]            = [];
-					$types[ $name ][ 'terms' ][ $term->name ][ 'name' ]  = $term->name;
-					$types[ $name ][ 'terms' ][ $term->name ][ 'color' ] = sanitize_hex_color( Term_Meta::instance()->get_meta( $term->term_id, 'color' ) );
-					$types[ $name ][ 'terms' ][ $term->name ][ 'label' ] = sanitize_text_field( Term_Meta::instance()->get_meta( $term->term_id, 'lable' ) );
+					$types[ $name ]['terms'][ $term->name ]          = [];
+					$types[ $name ]['terms'][ $term->name ]['name']  = $term->name;
+					$types[ $name ]['terms'][ $term->name ]['color'] = sanitize_hex_color( Term_Meta::instance()->get_meta( $term->term_id, 'color' ) );
+					$types[ $name ]['terms'][ $term->name ]['label'] = sanitize_text_field( Term_Meta::instance()->get_meta( $term->term_id, 'lable' ) );
 
-					$swatches_image_id = Term_Meta::instance()->get_meta( $term->term_id, 'image' );
-					$types[ $name ][ 'terms' ][ $term->name ][ 'image' ] = $swatches_image_id ? wp_get_attachment_image_url( $swatches_image_id, 'full' ) : '';
+					$swatches_image_id                               = Term_Meta::instance()->get_meta( $term->term_id, 'image' );
+					$types[ $name ]['terms'][ $term->name ]['image'] = $swatches_image_id ? wp_get_attachment_image_url( $swatches_image_id, 'full' ) : '';
 				}
 			}
 		}
@@ -357,9 +366,9 @@ class Backup {
 	 *
 	 * @todo convert image_url to image_id
 	 *
-	 * @param WC_Product $product - Product being imported or updated.
-	 * @param array $data - CSV data read for the product.
-	 * @return WC_Product $product
+	 * @param \WC_Product $product - Product being imported or updated.
+	 * @param array       $data - CSV data read for the product.
+	 * @return \WC_Product $product
 	 */
 	public function process_import( $product, $data ) {
 		if ( empty( $data['wcboost_variation_swatches'] ) ) {
@@ -391,8 +400,8 @@ class Backup {
 	/**
 	 * Import product attribute terms with custom swatches
 	 *
-	 * @param object $product
-	 * @param array $data
+	 * @param object $product Product object.
+	 * @param array  $data    CSV data for the product.
 	 *
 	 * @return void
 	 */
@@ -409,35 +418,35 @@ class Backup {
 			$id       = wc_attribute_taxonomy_id_by_name( $attr_name );
 			$taxonomy = wc_attribute_taxonomy_name( $attr_name );
 
-			if ( ! $id || in_array( $id, $processed_taxonomies ) ) {
+			if ( ! $id || in_array( $id, $processed_taxonomies, true ) ) {
 				continue;
 			}
 
 			array_push( $processed_taxonomies, $id );
 
-			wc_update_attribute( $id, [ 'type' => $attr[ 'type' ] ] );
+			wc_update_attribute( $id, [ 'type' => $attr['type'] ] );
 
-			foreach ( $attr[ 'terms' ] as $term_name => $term_data ) {
+			foreach ( $attr['terms'] as $term_name => $term_data ) {
 				$term = get_term_by( 'name', $term_name, $taxonomy );
 
-				if ( ! $term ||  in_array( $id, $processed_terms ) ) {
+				if ( ! $term || in_array( $id, $processed_terms, true ) ) {
 					continue;
 				}
 
 				array_push( $processed_terms, $term->term_id );
 
-				if ( ! empty( $term_data[ 'color' ] ) ) {
-					update_term_meta( $term->term_id, 'color', sanitize_hex_color( $term_data[ 'color' ] ) );
-					Term_Meta::instance()->update_meta( $term->term_id, 'color', sanitize_hex_color( $term_data[ 'color' ] ) );
+				if ( ! empty( $term_data['color'] ) ) {
+					update_term_meta( $term->term_id, 'color', sanitize_hex_color( $term_data['color'] ) );
+					Term_Meta::instance()->update_meta( $term->term_id, 'color', sanitize_hex_color( $term_data['color'] ) );
 				}
 
-				if ( ! empty( $term_data[ 'image' ] ) ) {
-					$image_id = $this->get_attachment_id_from_url( $term_data[ 'image' ], $product->get_id() );
+				if ( ! empty( $term_data['image'] ) ) {
+					$image_id = $this->get_attachment_id_from_url( $term_data['image'], $product->get_id() );
 					Term_Meta::instance()->update_meta( $term->term_id, 'image', absint( $image_id ) );
 				}
 
-				if ( ! empty( $term_data[ 'label' ] ) ) {
-					Term_Meta::instance()->update_meta( $term->term_id, 'label', sanitize_text_field( $term_data[ 'label' ] ) );
+				if ( ! empty( $term_data['label'] ) ) {
+					Term_Meta::instance()->update_meta( $term->term_id, 'label', sanitize_text_field( $term_data['label'] ) );
 				}
 			}
 		}
@@ -451,7 +460,7 @@ class Backup {
 	 * @param  string $url        Attachment URL.
 	 * @param  int    $product_id Product ID.
 	 * @return int
-	 * @throws Exception If attachment cannot be loaded.
+	 * @throws \Exception If attachment cannot be loaded.
 	 */
 	public function get_attachment_id_from_url( $url, $product_id ) {
 		if ( empty( $url ) ) {

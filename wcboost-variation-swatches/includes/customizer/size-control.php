@@ -1,8 +1,17 @@
 <?php
+/**
+ * Size Control for the Customizer.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches\Customize;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Customizer control for setting swatch width and height.
+ */
 class Size_Control extends \WP_Customize_Control {
 	/**
 	 * Declare the control type.
@@ -28,9 +37,9 @@ class Size_Control extends \WP_Customize_Control {
 		<?php endif; ?>
 
 		<span class="customize-control-inside">
-			<input type="text" size="3" pattern="\d*" value="<?php echo esc_attr( $size['width'] ) ?>" data-name="width"/>
+			<input type="text" size="3" pattern="\d*" value="<?php echo esc_attr( $size['width'] ); ?>" data-name="width"/>
 			&times;
-			<input type="text" size="3" pattern="\d*" value="<?php echo esc_attr( $size['height'] ) ?>" data-name="height"/>
+			<input type="text" size="3" pattern="\d*" value="<?php echo esc_attr( $size['height'] ); ?>" data-name="height"/>
 		</span>
 		<?php
 	}

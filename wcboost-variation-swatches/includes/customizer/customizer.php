@@ -1,4 +1,10 @@
 <?php
+/**
+ * Customizer options for Variation Swatches.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches\Customize;
 
 defined( 'ABSPATH' ) || exit;
@@ -41,10 +47,10 @@ class Customizer {
 		$wp_customize->add_section(
 			static::SECTION,
 			[
-				'title'    => esc_html__( 'Variation Swatches', 'wcboost-variation-swatches' ),
+				'title'       => esc_html__( 'Variation Swatches', 'wcboost-variation-swatches' ),
 				'description' => esc_html__( 'Some of these options can be overidden in product data settings.', 'wcboost-variation-swatches' ),
-				'priority' => 30,
-				'panel'    => 'woocommerce',
+				'priority'    => 30,
+				'panel'       => 'woocommerce',
 			]
 		);
 
@@ -69,7 +75,7 @@ class Customizer {
 			]
 		);
 
-		include_once dirname( __FILE__ ) . '/size-control.php';
+		include_once __DIR__ . '/size-control.php';
 
 		$wp_customize->add_setting(
 			$this->settings_api->get_option_name( 'size' ),

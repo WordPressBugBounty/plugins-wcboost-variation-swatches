@@ -1,26 +1,32 @@
 <?php
 /**
  * Compatible with other plugins/themes
+ *
+ * @package WCBoost\VariationSwatches
  */
+
 namespace WCBoost\VariationSwatches;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Compatibility with other plugins and themes.
+ */
 class Compatibility {
 	/**
 	 * The single instance of the class
 	 *
-	 * @var WCBoost\VariationSwatches\Compatibility
+	 * @var static
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Main instance
 	 *
-	 * @return WCBoost\VariationSwatches\Compatibility
+	 * @return static
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -64,6 +70,10 @@ class Compatibility {
 
 	/**
 	 * Copy swatches metadata from the original term
+	 *
+	 * @param mixed  $meta_value The metadata value.
+	 * @param int    $term_id    The term ID.
+	 * @param string $meta_key   The metadata key.
 	 *
 	 * @return mixed
 	 */

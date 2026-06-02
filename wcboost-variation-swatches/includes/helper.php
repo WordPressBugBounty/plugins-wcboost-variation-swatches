@@ -1,9 +1,27 @@
 <?php
+/**
+ * Helper functions for the plugin.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Class Helper
+ *
+ * Provides helper methods for the Variation Swatches plugin.
+ */
 class Helper {
+
+	/**
+	 * Cached attribute taxonomy objects.
+	 *
+	 * @var array
+	 */
+	protected static $attribute_taxonomies = [];
 
 	/**
 	 * Returns an array of all the swatches types.
@@ -37,7 +55,7 @@ class Helper {
 	/**
 	 * Get attribute swatches meta data from product data.
 	 *
-	 * @param int $product_id
+	 * @param int $product_id The product ID.
 	 * @return array
 	 */
 	public static function get_swatches_meta( $product_id = null ) {
@@ -49,7 +67,7 @@ class Helper {
 	/**
 	 * Get plugin settings.
 	 *
-	 * @param string $name
+	 * @param string $name The setting name.
 	 * @return mixed
 	 */
 	public static function get_settings( $name ) {
@@ -59,11 +77,11 @@ class Helper {
 	/**
 	 * Check if a setting is set as default.
 	 *
-	 * @param string $value
+	 * @param string $value The value to check.
 	 * @return boolean
 	 */
 	public static function is_default( $value ) {
-		return empty( $value ) || 'default' == $value;
+		return empty( $value ) || 'default' === $value;
 	}
 
 	/**
@@ -74,10 +92,17 @@ class Helper {
 	 * @return object
 	 */
 	public static function get_attribute_taxonomy( $attribute_name ) {
-		$attribute_slug     = wc_attribute_taxonomy_slug( $attribute_name );
+		$attribute_slug = wc_attribute_taxonomy_slug( $attribute_name );
+
+		if ( isset( self::$attribute_taxonomies[ $attribute_slug ] ) ) {
+			return self::$attribute_taxonomies[ $attribute_slug ];
+		}
+
 		$taxonomies         = wc_get_attribute_taxonomies();
 		$attribute_taxonomy = wp_list_filter( $taxonomies, [ 'attribute_name' => $attribute_slug ] );
 		$attribute_taxonomy = ! empty( $attribute_taxonomy ) ? array_shift( $attribute_taxonomy ) : null;
+
+		self::$attribute_taxonomies[ $attribute_slug ] = $attribute_taxonomy;
 
 		return $attribute_taxonomy;
 	}
@@ -85,7 +110,7 @@ class Helper {
 	/**
 	 * Check if an attribute type is custom type that support swatches.
 	 *
-	 * @param object $taxonomy The attribute object
+	 * @param object $taxonomy The attribute object.
 	 * @param string $context The context of the check, 'view' or 'edit'.
 	 *
 	 * @return bool
@@ -109,9 +134,9 @@ class Helper {
 	 * Get the correct image by size.
 	 * Crop a new image if the correct image is not exists.
 	 *
-	 * @param int   $attachment_id
-	 * @param array $size
-	 * @param bool  $force_crop Force cropping to a custom image size
+	 * @param int   $attachment_id The attachment ID.
+	 * @param array $size The image size.
+	 * @param bool  $force_crop Force cropping to a custom image size.
 	 *
 	 * @return array|bool
 	 */
@@ -133,7 +158,7 @@ class Helper {
 				$no_ext_path      = $file_info['dirname'] . '/' . $file_info['filename'];
 				$cropped_img_path = $no_ext_path . '-' . $width . 'x' . $height . $extension;
 
-				// the file is larger, check if the resized version already exists
+				// The file is larger, check if the resized version already exists.
 				if ( file_exists( $cropped_img_path ) ) {
 					$cropped_img_url = str_replace( basename( $image_src[0] ), basename( $cropped_img_path ), $image_src[0] );
 
@@ -144,7 +169,7 @@ class Helper {
 					];
 				}
 
-				// No resized file, let's crop it
+				// No resized file, let's crop it.
 				$image_editor = wp_get_image_editor( $file_path );
 
 				if ( is_wp_error( $image_editor ) || is_wp_error( $image_editor->resize( $width, $height, true ) ) ) {

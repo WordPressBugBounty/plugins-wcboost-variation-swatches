@@ -232,7 +232,7 @@
 	width: 0;
 	height: 0;
 	border: 5px solid transparent;
-	border-top-color: #333;
+	border-top-color: var(--wcboost-swatches-color-tooltip);
 	margin: 0 0 0 -5px;
 	opacity: 0;
 	visibility: hidden;

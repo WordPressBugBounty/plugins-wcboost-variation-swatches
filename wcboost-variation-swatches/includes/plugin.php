@@ -1,4 +1,10 @@
 <?php
+/**
+ * Plugin bootstrap.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches;
 
 defined( 'ABSPATH' ) || exit;
@@ -26,14 +32,14 @@ final class Plugin {
 	 *
 	 * @var Plugin
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Magic method to load in-accessible properties on demand
 	 *
 	 * @since 1.0.17
 	 *
-	 * @param  string $prop
+	 * @param  string $prop Property name.
 	 *
 	 * @return mixed
 	 */
@@ -41,7 +47,6 @@ final class Plugin {
 		switch ( $prop ) {
 			case 'version':
 				return WCBOOST_VARIATION_SWATCHES_VERSION;
-				break;
 		}
 	}
 
@@ -57,7 +62,7 @@ final class Plugin {
 	 * @return Plugin An instance of the class.
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -80,17 +85,17 @@ final class Plugin {
 	 * Load files
 	 */
 	public function load_files() {
-		require_once dirname( __FILE__ ) . '/mapping.php';
-		require_once dirname( __FILE__ ) . '/helper.php';
-		require_once dirname( __FILE__ ) . '/swatches.php';
-		require_once dirname( __FILE__ ) . '/compatibility.php';
+		require_once __DIR__ . '/mapping.php';
+		require_once __DIR__ . '/helper.php';
+		require_once __DIR__ . '/swatches.php';
+		require_once __DIR__ . '/compatibility.php';
 
-		require_once dirname( __FILE__ ) . '/admin/backup.php';
-		require_once dirname( __FILE__ ) . '/admin/settings.php';
-		require_once dirname( __FILE__ ) . '/admin/term-meta.php';
-		require_once dirname( __FILE__ ) . '/admin/product-data.php';
+		require_once __DIR__ . '/admin/backup.php';
+		require_once __DIR__ . '/admin/settings.php';
+		require_once __DIR__ . '/admin/term-meta.php';
+		require_once __DIR__ . '/admin/product-data.php';
 
-		require_once dirname( __FILE__ ) . '/customizer/customizer.php';
+		require_once __DIR__ . '/customizer/customizer.php';
 	}
 
 	/**
@@ -134,7 +139,7 @@ final class Plugin {
 	/**
 	 * Get the mapping object
 	 *
-	 * @return WCBoost\VariationSwatches\Mapping
+	 * @return \WCBoost\VariationSwatches\Mapping
 	 */
 	public function get_mapping() {
 		return $this->mapping;
@@ -145,7 +150,7 @@ final class Plugin {
 	 *
 	 * @since 1.0.15
 	 *
-	 * @param  array $links
+	 * @param  array $links Plugin action links.
 	 *
 	 * @return array
 	 */
@@ -154,7 +159,7 @@ final class Plugin {
 			$actions = [
 				'wcboost-go-pro' => '<a href="https://wcboost.com/plugin/woocommerce-variation-swatches/?utm_source=wp-plugin&utm_medium=wp-dash&utm_campaign=plugin-action-links" target="_blank" style="font-weight:bold;color:green;">' . esc_html__( 'Go Pro', 'wcboost-variation-swatches' ) . '</a>',
 			];
-			$links = array_merge( $links, $actions );
+			$links   = array_merge( $links, $actions );
 		}
 
 		return $links;
@@ -165,7 +170,7 @@ final class Plugin {
 	 *
 	 * @since 1.0.17
 	 *
-	 * @param array $links Plugin Row Meta.
+	 * @param array  $links Plugin Row Meta.
 	 * @param string $file  Plugin Base file.
 	 *
 	 * @return array

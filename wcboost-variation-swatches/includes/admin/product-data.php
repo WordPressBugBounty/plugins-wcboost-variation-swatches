@@ -1,4 +1,10 @@
 <?php
+/**
+ * Product Data integration.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches\Admin;
 
 defined( 'ABSPATH' ) || exit;
@@ -7,6 +13,9 @@ use WCBoost\VariationSwatches\Helper;
 use WCBoost\VariationSwatches\Plugin;
 use WCBoost\VariationSwatches\Admin\Term_Meta;
 
+/**
+ * Handles swatches product data integration.
+ */
 class Product_Data {
 	const META_NAME = 'wcboost_variation_swatches';
 
@@ -19,9 +28,9 @@ class Product_Data {
 	 * @access protected
 	 * @static
 	 *
-	 * @var WCBoost\VariationSwatches\Admin\Product_Data
+	 * @var static
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Instance.
@@ -32,10 +41,10 @@ class Product_Data {
 	 * @access public
 	 * @static
 	 *
-	 * @return WCBoost\VariationSwatches\Admin\Product_Data An instance of the class.
+	 * @return static
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -61,15 +70,15 @@ class Product_Data {
 	/**
 	 * Add selector for extra attribute types.
 	 *
-	 * @param object $taxonomy
-	 * @param int $index
-	 * @param \WC_Product_Attribute $attribute
+	 * @param object                $taxonomy  The taxonomy object.
+	 * @param int                   $index     The attribute index.
+	 * @param \WC_Product_Attribute $attribute The product attribute.
 	 */
 	public function product_option_terms( $taxonomy, $index, $attribute ) {
 		if ( ! Helper::attribute_is_swatches( $taxonomy ) ) {
 			return;
 		}
-		$term_limit = absint( apply_filters( 'woocommerce_admin_terms_metabox_datalimit', 50 ) );
+		$term_limit        = absint( apply_filters( 'woocommerce_admin_terms_metabox_datalimit', 50 ) );
 		$attribute_orderby = ! empty( $taxonomy->attribute_orderby ) ? $taxonomy->attribute_orderby : 'name';
 		?>
 		<select
@@ -98,14 +107,14 @@ class Product_Data {
 		</select>
 		<button class="button plus select_all_attributes"><?php esc_html_e( 'Select all', 'wcboost-variation-swatches' ); ?></button>
 		<button class="button minus select_no_attributes"><?php esc_html_e( 'Select none', 'wcboost-variation-swatches' ); ?></button>
-		<button class="button fr plus add_new_attribute_with_swatches" data-type="<?php echo esc_attr( $taxonomy->attribute_type ) ?>"><?php esc_html_e( 'Add new', 'wcboost-variation-swatches' ); ?></button>
+		<button class="button fr plus add_new_attribute_with_swatches" data-type="<?php echo esc_attr( $taxonomy->attribute_type ); ?>"><?php esc_html_e( 'Add new', 'wcboost-variation-swatches' ); ?></button>
 		<?php
 	}
 
 	/**
-	 * Add new product data tab for swatches
+	 * Add new product data tab for swatches.
 	 *
-	 * @param array $tabs
+	 * @param array $tabs The product data tabs.
 	 *
 	 * @return array
 	 */
@@ -121,7 +130,7 @@ class Product_Data {
 	}
 
 	/**
-	 * Outputs the swatches data panel
+	 * Outputs the swatches data panel.
 	 */
 	public function swatches_panel() {
 		global $product_object;
@@ -150,7 +159,7 @@ class Product_Data {
 					$attribute_swatches = wp_parse_args( $attribute_swatches, [
 						'type'        => '',
 						'size'        => '',
-						'custom_size' => ['width' => '', 'height' => ''],
+						'custom_size' => [ 'width' => '', 'height' => '' ],
 						'shape'       => '',
 						'swatches'    => [],
 					] );
@@ -159,7 +168,7 @@ class Product_Data {
 					<div data-taxonomy="<?php echo esc_attr( $attribute->get_taxonomy() ); ?>" class="wc-metabox closed" rel="<?php echo esc_attr( $attribute->get_position() ); ?>">
 						<h3>
 							<div class="handlediv" title="<?php esc_attr_e( 'Click to toggle', 'wcboost-variation-swatches' ); ?>"></div>
-							<div class="swatches-type fr" data-default="<?php echo esc_attr( $types[ $attribute_type ] ) ?>"><?php echo esc_html( $box_title ); ?></div>
+							<div class="swatches-type fr" data-default="<?php echo esc_attr( $types[ $attribute_type ] ); ?>"><?php echo esc_html( $box_title ); ?></div>
 							<strong class="attribute_name"><?php echo esc_html( wc_attribute_label( $attribute->get_name() ) ); ?></strong>
 						</h3>
 						<div class="wc-metabox-content hidden">
@@ -207,16 +216,16 @@ class Product_Data {
 									],
 								] );
 								?>
-								<p class="form-field form-field--custom-size dimensions_field <?php echo 'custom' != $attribute_swatches['size'] ? 'hidden' : '' ?>">
+								<p class="form-field form-field--custom-size dimensions_field <?php echo 'custom' !== $attribute_swatches['size'] ? 'hidden' : ''; ?>">
 									<span class="wrap">
-										<input type="text" name="wcboost_variation_swatches[<?php echo esc_attr( $attribute_name ) ?>][custom_size][width]" value="<?php echo esc_attr( $attribute_swatches['custom_size']['width'] ) ?>" size="5" placeholder="<?php esc_attr_e( 'Width', 'wcboost-variation-swatches' ) ?>">
-										<input type="text" name="wcboost_variation_swatches[<?php echo esc_attr( $attribute_name ) ?>][custom_size][height]" value="<?php echo esc_attr( $attribute_swatches['custom_size']['height'] ) ?>" size="5" placeholder="<?php esc_attr_e( 'Height', 'wcboost-variation-swatches' ) ?>">
+										<input type="text" name="wcboost_variation_swatches[<?php echo esc_attr( $attribute_name ); ?>][custom_size][width]" value="<?php echo esc_attr( $attribute_swatches['custom_size']['width'] ); ?>" size="5" placeholder="<?php esc_attr_e( 'Width', 'wcboost-variation-swatches' ); ?>">
+										<input type="text" name="wcboost_variation_swatches[<?php echo esc_attr( $attribute_name ); ?>][custom_size][height]" value="<?php echo esc_attr( $attribute_swatches['custom_size']['height'] ); ?>" size="5" placeholder="<?php esc_attr_e( 'Height', 'wcboost-variation-swatches' ); ?>">
 									</span>
 								</p>
 							</div>
 
 							<div class="options_group options_group--swatches">
-								<fieldset class="form-field form-field__swatches-color clearfix <?php echo 'color' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
+								<fieldset class="form-field form-field__swatches-color clearfix <?php echo 'color' !== $attribute_swatches['type'] ? 'hidden' : ''; ?>">
 									<?php
 									$this->swatches_metabox( [
 										'attribute' => $attribute,
@@ -226,7 +235,7 @@ class Product_Data {
 									?>
 								</fieldset>
 
-								<fieldset class="form-field form-field__swatches-image clearfix <?php echo 'image' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
+								<fieldset class="form-field form-field__swatches-image clearfix <?php echo 'image' !== $attribute_swatches['type'] ? 'hidden' : ''; ?>">
 									<?php
 									$this->swatches_metabox( [
 										'attribute' => $attribute,
@@ -236,7 +245,7 @@ class Product_Data {
 									?>
 								</fieldset>
 
-								<fieldset class="form-field form-field__swatches-label clearfix <?php echo 'label' != $attribute_swatches['type'] ? 'hidden' : '' ?>">
+								<fieldset class="form-field form-field__swatches-label clearfix <?php echo 'label' !== $attribute_swatches['type'] ? 'hidden' : ''; ?>">
 									<?php
 									$this->swatches_metabox( [
 										'attribute' => $attribute,
@@ -258,9 +267,9 @@ class Product_Data {
 	}
 
 	/**
-	 * Output custom swatches data fields
+	 * Output custom swatches data fields.
 	 *
-	 * @param array $args
+	 * @param array $args The swatches metabox arguments.
 	 */
 	protected function swatches_metabox( $args ) {
 		$args = wp_parse_args( $args, [
@@ -329,9 +338,9 @@ class Product_Data {
 	}
 
 	/**
-	 * Save custom swatches data
+	 * Save custom swatches data.
 	 *
-	 * @param int $post_id
+	 * @param int $post_id The post ID.
 	 *
 	 * @return bool
 	 */
@@ -371,7 +380,7 @@ class Product_Data {
 	 * Get swatches post meta.
 	 * Support mapping values from other plugins.
 	 *
-	 * @param int $post_id The product id
+	 * @param int $post_id The product id.
 	 *
 	 * @return array|bool
 	 */
@@ -439,7 +448,7 @@ class Product_Data {
 	public function dialog_new_term() {
 		global $pagenow, $thepostid;
 
-		if ( ! in_array( $pagenow, ['post.php', 'post-new.php'] ) || get_post_type( $thepostid ) != 'product' ) {
+		if ( ! in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) || get_post_type( $thepostid ) !== 'product' ) {
 			return;
 		}
 		?>
@@ -448,14 +457,14 @@ class Product_Data {
 			<div class="wcboost-variation-swatches-modal wp-core-ui" tabindex="0" role="dialog">
 				<button type="button" class="media-modal-close">
 					<span class="media-modal-icon">
-						<span class="screen-reader-text"><?php esc_html_e( 'Close dialog', 'wcboost-variation-swatches' ) ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Close dialog', 'wcboost-variation-swatches' ); ?></span>
 					</span>
 				</button>
-				<div class="wcboost-variation-swatches-modal__header"><h2><?php esc_html_e( 'Add New Term', 'wcboost-variation-swatches' ) ?></h2></div>
+				<div class="wcboost-variation-swatches-modal__header"><h2><?php esc_html_e( 'Add New Term', 'wcboost-variation-swatches' ); ?></h2></div>
 				<div class="wcboost-variation-swatches-modal__content">
 					<p class="form-field">
 						<label>
-							<?php esc_html_e( 'Name', 'wcboost-variation-swatches' ) ?><br>
+							<?php esc_html_e( 'Name', 'wcboost-variation-swatches' ); ?><br>
 							<input type="text" class="widefat" name="attribute_name" class="widefat">
 						</label>
 					</p>
@@ -487,10 +496,10 @@ class Product_Data {
 
 					<input type="hidden" name="attribute_taxonomy" value="">
 					<input type="hidden" name="attribute_type" value="">
-					<?php wp_nonce_field( 'wcboost_variation_swatches_add_term', '_wpnonce', false ) ?>
+					<?php wp_nonce_field( 'wcboost_variation_swatches_add_term', '_wpnonce', false ); ?>
 				</div>
 				<div class="wcboost-variation-swatches-modal__footer">
-					<button type="button" class="button-add button button-primary"><?php esc_html_e( 'Add New', 'wcboost-variation-swatches' ) ?></button>
+					<button type="button" class="button-add button button-primary"><?php esc_html_e( 'Add New', 'wcboost-variation-swatches' ); ?></button>
 					<span class="wcboost-variation-swatches-modal__spinner spinner"></span>
 					<span class="wcboost-variation-swatches-modal__message hidden"></span>
 				</div>

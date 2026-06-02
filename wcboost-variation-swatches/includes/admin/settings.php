@@ -1,10 +1,22 @@
 <?php
+/**
+ * Settings class
+ *
+ * Manages the plugin settings.
+ *
+ * @package WCBoost\VariationSwatches
+ */
+
 namespace WCBoost\VariationSwatches\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
 use WCBoost\VariationSwatches\Plugin;
 
+/**
+ * Settings class.
+ * Manages the plugin settings.
+ */
 class Settings {
 	const OPTION_NAME = 'wcboost_variation_swatches';
 
@@ -17,9 +29,9 @@ class Settings {
 	 * @access protected
 	 * @static
 	 *
-	 * @var WCBoost\VariationSwatches\Admin\Settings
+	 * @var static
 	 */
-	protected static $_instance = null;
+	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Plugin settings
@@ -27,6 +39,13 @@ class Settings {
 	 * @var array
 	 */
 	protected $settings;
+
+	/**
+	 * Cached resolved option values.
+	 *
+	 * @var array
+	 */
+	protected static $option_cache = [];
 
 	/**
 	 * Instance.
@@ -37,10 +56,10 @@ class Settings {
 	 * @access public
 	 * @static
 	 *
-	 * @return WCBoost\VariationSwatches\Admin\Settings An instance of the class.
+	 * @return static
 	 */
 	public static function instance() {
-		if ( null == self::$_instance ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
@@ -59,7 +78,7 @@ class Settings {
 			'wcboost_variation_swatches_settings_default',
 			[
 				'shape'               => 'round',
-				'size'                => ['width' => 30, 'height' => 30],
+				'size'                => [ 'width' => 30, 'height' => 30 ],
 				'tooltip'             => 'yes',
 				'auto_button'         => 'yes',
 				'show_selected_label' => 'no',
@@ -72,13 +91,13 @@ class Settings {
 	/**
 	 * Get default setting
 	 *
-	 * @param string $name
+	 * @param string $name The setting name.
 	 * @return mixed
 	 */
 	public function get_default( $name = null ) {
 		$settings = $this->get_settings();
 
-		if (  ! $name ) {
+		if ( ! $name ) {
 			return (array) $settings;
 		}
 
@@ -101,22 +120,29 @@ class Settings {
 	/**
 	 * Get setting value
 	 *
-	 * @param string $name
+	 * @param string $name The setting name.
 	 * @return mixed
 	 */
 	public function get_option( $name ) {
+		if ( isset( self::$option_cache[ $name ] ) ) {
+			return self::$option_cache[ $name ];
+		}
+
 		$value = get_option( $this->get_option_name( $name ) );
 
 		// Get value from other plugins if there is no option of this plugin in the database.
 		if ( false === $value ) {
 			$value = Plugin::instance()->get_mapping()->get_option_value( $name );
-			$value = $value ? $value : $this->get_default( $name );
 
-			// Save the value to databse for faster loading next time.
-			if ( false !== $value ) {
+			if ( $value ) {
+				// Save the mapping value to database for faster loading next time.
 				$this->update_option( $name, $value );
+			} else {
+				$value = $this->get_default( $name );
 			}
 		}
+
+		self::$option_cache[ $name ] = $value;
 
 		return $value;
 	}
@@ -124,8 +150,8 @@ class Settings {
 	/**
 	 * Update option
 	 *
-	 * @param string $name
-	 * @param mixed $value
+	 * @param string $name  The setting name.
+	 * @param mixed  $value The setting value.
 	 * @return void
 	 */
 	public function update_option( $name, $value ) {
@@ -150,7 +176,7 @@ class Settings {
 
 			if ( $default && ! array_key_exists( $default, $options ) ) {
 				// Only allow 'default' and 'theme' values.
-				$default = in_array( $default, ['default', 'theme'], true ) ? $default : 'default';
+				$default = in_array( $default, [ 'default', 'theme' ], true ) ? $default : 'default';
 
 				$options = array_merge( [ $default => esc_html__( 'Theme Default', 'wcboost-variation-swatches' ) ], $options );
 			}
@@ -183,7 +209,7 @@ class Settings {
 
 			if ( $default && ! array_key_exists( $default, $options ) ) {
 				// Only allow 'default' and 'theme' values.
-				$default = in_array( $default, ['default', 'theme'], true ) ? $default : 'default';
+				$default = in_array( $default, [ 'default', 'theme' ], true ) ? $default : 'default';
 
 				$options = array_merge( [ $default => esc_html__( 'Theme Default', 'wcboost-variation-swatches' ) ], $options );
 			}
@@ -195,7 +221,7 @@ class Settings {
 	/**
 	 * Get option name
 	 *
-	 * @param string $name
+	 * @param string $name The setting name.
 	 *
 	 * @return string
 	 */
@@ -206,31 +232,31 @@ class Settings {
 	/**
 	 * Sanitize the shape option
 	 *
-	 * @param string $shape
+	 * @param string $value The type value to sanitize.
 	 * @return string
 	 */
 	public function sanitize_type( $value ) {
 		$types = array_keys( wc_get_attribute_types() );
 
-		return in_array( $value, $types ) ? $value : '';
+		return in_array( $value, $types, true ) ? $value : '';
 	}
 
 	/**
 	 * Sanitize the shape option
 	 *
-	 * @param string $shape
+	 * @param string $value The shape value to sanitize.
 	 * @return string
 	 */
 	public function sanitize_shape( $value ) {
 		$shapes = array_keys( $this->get_shape_options() );
 
-		return in_array( $value, $shapes ) ? $value : '';
+		return in_array( $value, $shapes, true ) ? $value : '';
 	}
 
 	/**
 	 * Sanitize the shape option
 	 *
-	 * @param array $value
+	 * @param array $value The size value to sanitize.
 	 * @return string
 	 */
 	public function sanitize_size( $value ) {
@@ -248,13 +274,13 @@ class Settings {
 	 *
 	 * @since 1.1.2
 	 *
-	 * @param string $value
+	 * @param string $value The invalid display value to sanitize.
 	 * @return string
 	 */
 	public function sanitize_invalid_display( $value ) {
 		$options = array_keys( $this->get_invalid_display_options() );
 
-		return in_array( $value, $options ) ? $value : 'blur';
+		return in_array( $value, $options, true ) ? $value : 'blur';
 	}
 }
 

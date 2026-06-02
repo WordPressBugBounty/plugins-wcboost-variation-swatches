@@ -4,7 +4,7 @@
  * Description: Transform boring dropdown variants into attractive and intuitive swatches, improving user experience and simplifying product selection.
  * Plugin URI: https://wcboost.com/plugin/woocommerce-variation-swatches/
  * Author: WCBoost
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author URI: https://wcboost.com/
  *
  * Text Domain: wcboost-variation-swatches
@@ -12,9 +12,9 @@
  *
  * Requires PHP: 7.0
  * Requires at least: 4.5
- * Tested up to: 6.9
+ * Tested up to: 7.0
  * WC requires at least: 3.0.0
- * WC tested up to: 10.4
+ * WC tested up to: 10.8
  * License: GPLv3 or later
  *
  * @package WCBoost\VariationSwatches
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'WCBOOST_VARIATION_SWATCHES_VERSION', '1.1.3' );
+define( 'WCBOOST_VARIATION_SWATCHES_VERSION', '1.1.4' );
 define( 'WCBOOST_VARIATION_SWATCHES_FREE', plugin_basename( __FILE__ ) );
 
 if ( ! defined( 'WCBOOST_VARIATION_SWATCHES_FILE' ) ) {
@@ -91,6 +91,7 @@ if ( ! function_exists( 'wcboost_variation_swatches_installation_check' ) ) {
 /**
  * Backup all custom attributes by resettig the type to "select".
  *
+ * @param bool $network_deactivating Whether the plugin is being deactivated network-wide in a multisite installation.
  * @todo remove in 2.0.0
  */
 function wcboost_variation_swatches_deactivate( $network_deactivating ) {
@@ -103,7 +104,7 @@ function wcboost_variation_swatches_deactivate( $network_deactivating ) {
 
 	global $wpdb;
 
-	$blog_ids         = [1];
+	$blog_ids         = [ 1 ];
 	$original_blog_id = 1;
 	$network          = false;
 
