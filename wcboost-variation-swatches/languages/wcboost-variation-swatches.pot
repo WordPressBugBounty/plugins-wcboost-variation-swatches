@@ -1,344 +1,349 @@
-# Copyright (C) 2025 WCBoost
+# Copyright (C) 2026 WCBoost
 # This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WCBoost - Variation Swatches 1.1.2\n"
+"Project-Id-Version: WCBoost - Variation Swatches 1.1.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wcboost-variation-swatches\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-05T08:28:26+00:00\n"
+"POT-Creation-Date: 2026-10-13T09:32:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.10.0\n"
+"X-Generator: WP-CLI 3.0.0-alpha-01b1b10\n"
 "X-Domain: wcboost-variation-swatches\n"
 
 #. Plugin Name of the plugin
-#: wcboost-variation-swatches.php
+#: wcboost-variation-swatches.php:3
 msgid "WCBoost - Variation Swatches"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: wcboost-variation-swatches.php
+#: wcboost-variation-swatches.php:5
 msgid "https://wcboost.com/plugin/woocommerce-variation-swatches/"
 msgstr ""
 
 #. Description of the plugin
-#: wcboost-variation-swatches.php
+#: wcboost-variation-swatches.php:4
 msgid "Transform boring dropdown variants into attractive and intuitive swatches, improving user experience and simplifying product selection."
 msgstr ""
 
 #. Author of the plugin
-#: wcboost-variation-swatches.php
+#: wcboost-variation-swatches.php:6
 msgid "WCBoost"
 msgstr ""
 
 #. Author URI of the plugin
-#: wcboost-variation-swatches.php
+#: wcboost-variation-swatches.php:8
 msgid "https://wcboost.com/"
 msgstr ""
 
 #. translators: %s is a datetime
-#: includes/admin/backup.php:80
+#: includes/admin/backup.php:89
+#, php-format
 msgid "Found a backup of your attributes type. This backup was generated at %s."
 msgstr ""
 
-#: includes/admin/backup.php:84
+#: includes/admin/backup.php:93
 msgid "Restore attributes"
 msgstr ""
 
-#: includes/admin/backup.php:85
+#: includes/admin/backup.php:94
 msgid "Ignore"
 msgstr ""
 
-#: includes/admin/backup.php:94
+#: includes/admin/backup.php:103
 msgid "All attribute types have been restored."
 msgstr ""
 
-#: includes/admin/backup.php:245
-#: includes/admin/backup.php:259
-#: includes/customizer/customizer.php:44
+#: includes/admin/backup.php:254
+#: includes/admin/backup.php:268
+#: includes/customizer/customizer.php:50
 msgid "Variation Swatches"
 msgstr ""
 
-#: includes/admin/backup.php:246
-#: includes/admin/backup.php:260
+#: includes/admin/backup.php:255
+#: includes/admin/backup.php:269
 msgid "Attributes Swatches"
 msgstr ""
 
 #. translators: %s: image URL
-#: includes/admin/backup.php:525
+#: includes/admin/backup.php:534
+#, php-format
 msgid "Not able to attach \"%s\"."
 msgstr ""
 
 #. translators: %s: image URL
-#: includes/admin/backup.php:534
+#: includes/admin/backup.php:543
+#, php-format
 msgid "Unable to use image \"%s\"."
 msgstr ""
 
-#: includes/admin/product-data.php:79
+#: includes/admin/product-data.php:88
 msgid "Select values"
 msgstr ""
 
-#: includes/admin/product-data.php:99
+#: includes/admin/product-data.php:108
 msgid "Select all"
 msgstr ""
 
-#: includes/admin/product-data.php:100
+#: includes/admin/product-data.php:109
 msgid "Select none"
 msgstr ""
 
-#: includes/admin/product-data.php:101
+#: includes/admin/product-data.php:110
 msgid "Add new"
 msgstr ""
 
-#: includes/admin/product-data.php:114
+#: includes/admin/product-data.php:123
 msgid "Swatches"
 msgstr ""
 
-#: includes/admin/product-data.php:161
+#: includes/admin/product-data.php:170
 msgid "Click to toggle"
 msgstr ""
 
-#: includes/admin/product-data.php:172
+#: includes/admin/product-data.php:181
 msgid "Type"
 msgstr ""
 
 #. translators: %s is attribute default type
-#: includes/admin/product-data.php:174
+#: includes/admin/product-data.php:183
+#, php-format
 msgid "The default type is: %s"
 msgstr ""
 
-#: includes/admin/product-data.php:176
-#: includes/admin/product-data.php:191
-#: includes/admin/product-data.php:205
+#: includes/admin/product-data.php:185
+#: includes/admin/product-data.php:200
+#: includes/admin/product-data.php:214
 msgid "Default"
 msgstr ""
 
-#: includes/admin/product-data.php:187
+#: includes/admin/product-data.php:196
 msgid "Shape"
 msgstr ""
 
 #. translators: %s is the default swatch shape
-#: includes/admin/product-data.php:189
+#: includes/admin/product-data.php:198
+#, php-format
 msgid "The default shape is: %s"
 msgstr ""
 
-#: includes/admin/product-data.php:202
+#: includes/admin/product-data.php:211
 msgid "Size"
 msgstr ""
 
-#: includes/admin/product-data.php:206
+#: includes/admin/product-data.php:215
 msgid "Custom"
 msgstr ""
 
-#: includes/admin/product-data.php:212
+#: includes/admin/product-data.php:221
 msgid "Width"
 msgstr ""
 
-#: includes/admin/product-data.php:213
+#: includes/admin/product-data.php:222
 msgid "Height"
 msgstr ""
 
-#: includes/admin/product-data.php:401
+#: includes/admin/product-data.php:410
 msgid "Wrong request"
 msgstr ""
 
-#: includes/admin/product-data.php:405
+#: includes/admin/product-data.php:414
 msgid "Not enough data"
 msgstr ""
 
-#: includes/admin/product-data.php:413
+#: includes/admin/product-data.php:422
 msgid "Taxonomy is not exists"
 msgstr ""
 
-#: includes/admin/product-data.php:417
+#: includes/admin/product-data.php:426
 msgid "This term is already exists"
 msgstr ""
 
-#: includes/admin/product-data.php:425
+#: includes/admin/product-data.php:434
 msgid "Added successfully"
 msgstr ""
 
-#: includes/admin/product-data.php:451
+#: includes/admin/product-data.php:460
 msgid "Close dialog"
 msgstr ""
 
-#: includes/admin/product-data.php:454
+#: includes/admin/product-data.php:463
 msgid "Add New Term"
 msgstr ""
 
-#: includes/admin/product-data.php:458
+#: includes/admin/product-data.php:467
 msgid "Name"
 msgstr ""
 
-#: includes/admin/product-data.php:467
-#: includes/helper.php:17
+#: includes/admin/product-data.php:476
+#: includes/helper.php:35
 msgid "Color"
 msgstr ""
 
-#: includes/admin/product-data.php:474
-#: includes/helper.php:18
+#: includes/admin/product-data.php:483
+#: includes/helper.php:36
 msgid "Image"
 msgstr ""
 
-#: includes/admin/product-data.php:481
-#: includes/helper.php:19
+#: includes/admin/product-data.php:490
+#: includes/helper.php:37
 msgid "Label"
 msgstr ""
 
-#: includes/admin/product-data.php:493
+#: includes/admin/product-data.php:502
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/settings.php:142
+#: includes/admin/settings.php:168
 msgid "Circle"
 msgstr ""
 
-#: includes/admin/settings.php:143
+#: includes/admin/settings.php:169
 msgid "Rounded corners"
 msgstr ""
 
-#: includes/admin/settings.php:144
+#: includes/admin/settings.php:170
 msgid "Square"
 msgstr ""
 
-#: includes/admin/settings.php:155
-#: includes/admin/settings.php:188
+#: includes/admin/settings.php:181
+#: includes/admin/settings.php:214
 msgid "Theme Default"
 msgstr ""
 
-#: includes/admin/settings.php:171
+#: includes/admin/settings.php:197
 msgid "Hide"
 msgstr ""
 
-#: includes/admin/settings.php:172
+#: includes/admin/settings.php:198
 msgid "Blur"
 msgstr ""
 
-#: includes/admin/settings.php:173
+#: includes/admin/settings.php:199
 msgid "Cross out"
 msgstr ""
 
-#: includes/admin/settings.php:174
+#: includes/admin/settings.php:200
 msgid "Line through"
 msgstr ""
 
-#: includes/admin/settings.php:175
+#: includes/admin/settings.php:201
 msgid "Slash"
 msgstr ""
 
-#: includes/admin/settings.php:176
+#: includes/admin/settings.php:202
 msgid "Blur & Cross out"
 msgstr ""
 
-#: includes/admin/settings.php:177
+#: includes/admin/settings.php:203
 msgid "Blur & Line through"
 msgstr ""
 
-#: includes/admin/settings.php:178
+#: includes/admin/settings.php:204
 msgid "Blur & Slash"
 msgstr ""
 
-#: includes/admin/term-meta.php:131
-#: includes/admin/term-meta.php:157
+#: includes/admin/term-meta.php:142
+#: includes/admin/term-meta.php:168
 msgid "This data will be used for variation swatches of variable products."
 msgstr ""
 
-#: includes/admin/term-meta.php:172
+#: includes/admin/term-meta.php:183
 msgid "Swatches Color"
 msgstr ""
 
-#: includes/admin/term-meta.php:173
-#: includes/admin/term-meta.php:500
+#: includes/admin/term-meta.php:184
+#: includes/admin/term-meta.php:512
 msgid "Swatches Image"
 msgstr ""
 
-#: includes/admin/term-meta.php:174
+#: includes/admin/term-meta.php:185
 msgid "Swatches Label"
 msgstr ""
 
-#: includes/admin/term-meta.php:501
+#: includes/admin/term-meta.php:513
 msgid "Use image"
 msgstr ""
 
-#: includes/admin/term-meta.php:502
+#: includes/admin/term-meta.php:514
 msgid "Upload"
 msgstr ""
 
-#: includes/admin/term-meta.php:510
+#: includes/admin/term-meta.php:522
 msgid "Remove"
 msgstr ""
 
-#: includes/compatibility.php:93
+#: includes/compatibility.php:103
 msgid "WCBoost - Variation Swatches requires WooCommerce to work. Please install and activate WooCommerce before using this extension."
 msgstr ""
 
-#: includes/compatibility.php:108
+#: includes/compatibility.php:118
 msgid "WCBoost - Variation Swatches (Free) has been automatically deactivated because you have installed the Pro version."
 msgstr ""
 
-#: includes/customizer/customizer.php:45
+#: includes/customizer/customizer.php:51
 msgid "Some of these options can be overidden in product data settings."
 msgstr ""
 
-#: includes/customizer/customizer.php:64
+#: includes/customizer/customizer.php:70
 msgid "Swatches Shape"
 msgstr ""
 
-#: includes/customizer/customizer.php:65
+#: includes/customizer/customizer.php:71
 msgid "Choose the shape style of variation swatches"
 msgstr ""
 
-#: includes/customizer/customizer.php:89
+#: includes/customizer/customizer.php:95
 msgid "Swatches Size"
 msgstr ""
 
-#: includes/customizer/customizer.php:90
+#: includes/customizer/customizer.php:96
 msgid "Set the default size of variation swatches."
 msgstr ""
 
-#: includes/customizer/customizer.php:109
+#: includes/customizer/customizer.php:115
 msgid "Invalid swatches display"
 msgstr ""
 
-#: includes/customizer/customizer.php:110
+#: includes/customizer/customizer.php:116
 msgid "Choose how to display invalid/unavailable swatches"
 msgstr ""
 
-#: includes/customizer/customizer.php:131
+#: includes/customizer/customizer.php:137
 msgid "Enable tooltip"
 msgstr ""
 
-#: includes/customizer/customizer.php:151
+#: includes/customizer/customizer.php:157
 msgid "Convert default dropdowns to buttons"
 msgstr ""
 
-#: includes/customizer/customizer.php:171
+#: includes/customizer/customizer.php:177
 msgid "Show the selected attribute's label"
 msgstr ""
 
-#: includes/helper.php:20
+#: includes/helper.php:38
 msgid "Button"
 msgstr ""
 
-#: includes/plugin.php:155
+#: includes/plugin.php:160
 msgid "Go Pro"
 msgstr ""
 
-#: includes/plugin.php:179
+#: includes/plugin.php:184
 msgid "View plugin documentation"
 msgstr ""
 
-#: includes/plugin.php:179
+#: includes/plugin.php:184
 msgid "Docs"
 msgstr ""
 
-#: includes/plugin.php:180
+#: includes/plugin.php:185
 msgid "Visit community support forums"
 msgstr ""
 
-#: includes/plugin.php:180
+#: includes/plugin.php:185
 msgid "Community support"
 msgstr ""

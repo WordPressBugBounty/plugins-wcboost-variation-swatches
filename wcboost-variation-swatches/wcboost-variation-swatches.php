@@ -4,7 +4,7 @@
  * Description: Transform boring dropdown variants into attractive and intuitive swatches, improving user experience and simplifying product selection.
  * Plugin URI: https://wcboost.com/plugin/woocommerce-variation-swatches/
  * Author: WCBoost
- * Version: 1.1.4
+ * Version: 1.1.5
  * Author URI: https://wcboost.com/
  *
  * Text Domain: wcboost-variation-swatches
@@ -12,9 +12,9 @@
  *
  * Requires PHP: 7.0
  * Requires at least: 4.5
- * Tested up to: 7.0
+ * Tested up to: 7.1
  * WC requires at least: 3.0.0
- * WC tested up to: 10.8
+ * WC tested up to: 11.1
  * License: GPLv3 or later
  *
  * @package WCBoost\VariationSwatches
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'WCBOOST_VARIATION_SWATCHES_VERSION', '1.1.4' );
+define( 'WCBOOST_VARIATION_SWATCHES_VERSION', '1.1.5' );
 define( 'WCBOOST_VARIATION_SWATCHES_FREE', plugin_basename( __FILE__ ) );
 
 if ( ! defined( 'WCBOOST_VARIATION_SWATCHES_FILE' ) ) {

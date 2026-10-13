@@ -112,7 +112,12 @@ class Swatches {
 		$product   = $args['product'];
 		$attribute = $args['attribute'];
 
-		if ( empty( $options ) && ! empty( $product ) && ! empty( $attribute ) ) {
+		// Swatches settings are per-product, so a product is required.
+		if ( ! $product instanceof \WC_Product ) {
+			return $html;
+		}
+
+		if ( empty( $options ) && ! empty( $attribute ) ) {
 			$attributes = $product->get_variation_attributes();
 			$options    = $attributes[ $attribute ];
 		}

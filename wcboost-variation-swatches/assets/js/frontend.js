@@ -46,7 +46,7 @@
 		}
 
 		var $select = $el.closest( '.wcboost-variation-swatches' ).find( 'select' ),
-			value = ! $el.hasClass( 'selected' ) ? $el.data( 'value' ) : '';
+			value = ! $el.hasClass( 'selected' ) ? $el.attr( 'data-value' ) : '';
 
 
 		$select.trigger( 'focusin' ); // Compatible with old version of WooCommerce.
@@ -110,11 +110,13 @@
 			// Disable invalid swatches.
 			self.$attributeFields.each( function() {
 				var $select = $( this ),
+					$options = $select.find( 'option' ),
 					$items = $select.siblings( '.wcboost-variation-swatches__wrapper' ).find( '.wcboost-variation-swatches__item' );
 
 				$items.each( function() {
 					var $item = $( this ),
-						$option = $select.find( 'option[value="' + $item.data( 'value' ) + '"]' );
+						value = this.getAttribute( 'data-value' ),
+						$option = $options.filter( function() { return this.value === value; } );
 
 					if ( ! $option.length || $option.prop( 'disabled' ) ) {
 						$item.addClass( 'disabled is-invalid' ).removeClass( 'selected' ).data( 'disabled', true ).attr( 'tabindex', -1 );

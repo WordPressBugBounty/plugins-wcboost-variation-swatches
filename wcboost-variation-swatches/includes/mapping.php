@@ -205,10 +205,10 @@ class Mapping {
 				$sub_options = current( $params );
 				$value       = get_option( $option_name );
 
-				// Reset the value if it is not an array.
+				// Skip to the next plugin if the value is not an array.
 				if ( ! is_array( $value ) ) {
 					$value = false;
-					break;
+					continue;
 				}
 
 				while ( is_array( $sub_options ) ) {
